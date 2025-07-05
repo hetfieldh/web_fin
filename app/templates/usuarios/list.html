@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Listagem de Usuários - WebFin{% endblock %}
+
+{% block content %}
+<h1>Listagem de Usuários</h1>
+
+<a href="{{ url_for('usuario_bp.add_user') }}" class="btn-primary"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-user-plus"></i> Adicionar Novo Usuário</a>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% if users %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Login</th>
+            <th>Ativo</th>
+            <th>Admin</th>
+            <th>Data Criação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.nome }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ 'Sim' if user.is_active else 'Não' }}</td>
+            <td>{{ 'Sim' if user.is_admin else 'Não' }}</td>
+            <td>{{ user.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('usuario_bp.edit_user', user_id=user.id) }}"><i class="fas fa-edit"></i> Editar</a>
+
+                {# Formulário para Excluir Usuário #}
+                <form action="{{ url_for('usuario_bp.delete_user', user_id=user.id) }}" method="POST"
+                    style="display:inline;">
+                    {# Flask tem proteção CSRF embutida para sessões, mas se usar WTForms seria melhor usar um campo
+                    hidden de CSRF aqui #}
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir este usuário? Esta ação é irreversível!');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;"><i
+                            class="fas fa-trash-alt"></i> Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Nenhum usuário cadastrado.</p>
+{% endif %}
+{% endblock %}

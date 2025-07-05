@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Usuário - WebFin{% endblock %}
+
+{% block content %}
+<h1>Editar Usuário: {{ user.nome }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('usuario_bp.edit_user', user_id=user.id) }}">
+    <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="{{ user.nome }}" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+    </div>
+    <div class="form-group">
+        <label for="login">Login:</label>
+        <input type="text" id="login" name="login" value="{{ user.login }}" required>
+    </div>
+    <div class="form-group">
+        <label for="senha">Nova Senha (deixe em branco para não alterar):</label>
+        <input type="password" id="senha" name="senha">
+    </div>
+    {# Removed: Perfil selection field #}
+    <div class="form-group" style="display: flex; align-items: center;">
+        <input type="checkbox" id="is_active" name="is_active" {% if user.is_active %}checked{% endif %}
+            style="margin-right: 8px;">
+        <label for="is_active" style="margin-bottom: 0;">Ativo</label>
+    </div>
+    <div class="form-group" style="display: flex; align-items: center;">
+        <input type="checkbox" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}
+            style="margin-right: 8px;">
+        <label for="is_admin" style="margin-bottom: 0;">Administrador</label>
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('usuario_bp.list_users') }}" class="btn-primary"
+        style="background-color: #6c757d; margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

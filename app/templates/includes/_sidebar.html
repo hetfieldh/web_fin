@@ -1,0 +1,75 @@
+{# app/templates/includes/_sidebar.html #}
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="WebFin Logo">
+    </div>
+    <nav>
+        <ul>
+            {# Dashboard Link #}
+            <li>
+                <a href="{{ url_for('usuario_bp.dashboard') }}"
+                    class="{% if request.endpoint == 'usuario_bp.dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+
+            {# Transações Link (futuro) #}
+            <li>
+                <a href="#" {# Mude para {{ url_for('transacao_bp.list_transactions') }} quando criar #}
+                    class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i> Transações
+                </a>
+            </li>
+
+            {# Categorias Link (futuro) #}
+            <li>
+                <a href="#" {# Mude para {{ url_for('categoria_bp.list_categories') }} quando criar #}
+                    class="{% if request.endpoint == 'categoria_bp.list_categories' %}active{% endif %}">
+                    <i class="fas fa-tags"></i> Categorias
+                </a>
+            </li>
+
+            {# Contas Link (futuro) #}
+            <li>
+                <a href="#" {# Mude para {{ url_for('conta_bp.list_accounts') }} quando criar #}
+                    class="{% if request.endpoint == 'conta_bp.list_accounts' %}active{% endif %}">
+                    <i class="fas fa-wallet"></i> Contas
+                </a>
+            </li>
+
+            {# Usuários Link (Apenas para administradores) #}
+            {% if current_user.is_authenticated and current_user.is_admin %}
+            <li>
+                <a href="{{ url_for('usuario_bp.list_users') }}"
+                    class="{% if request.endpoint == 'usuario_bp.list_users' or request.endpoint == 'usuario_bp.add_user' or request.endpoint == 'usuario_bp.edit_user' %}active{% endif %}">
+                    <i class="fas fa-users"></i> Usuários
+                </a>
+            </li>
+            {% endif %}
+
+            {# Configurações Link (futuro) #}
+            <li>
+                <a href="#" {# Mude para {{ url_for('configuracoes_bp.settings') }} quando criar #}
+                    class="{% if request.endpoint == 'configuracoes_bp.settings' %}active{% endif %}">
+                    <i class="fas fa-cog"></i> Configurações
+                </a>
+            </li>
+
+            {# Sair Link #}
+            <li>
+                <a href="{{ url_for('usuario_bp.logout') }}"
+                    class="{% if request.endpoint == 'usuario_bp.logout' %}active{% endif %}">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="sidebar-footer">
+        {% if current_user.is_authenticated %}
+        <p style="font-size: 0.9em; color: #BBB; margin-bottom: 5px;">
+            Online: <strong>{{ current_user.login }}</strong>
+        </p>
+        {% endif %}
+        <p class="footer-text">&copy; 2025 WebFin</p>
+    </div>
+</div>

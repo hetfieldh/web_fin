@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WebFin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de login para centralizar o formulário */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            /* Garante que o fundo seja o mesmo do app */
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            /* Para responsividade */
+            padding: 30px;
+            background-color: #FFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1 style="text-align: center; color: var(--text-primary); margin-bottom: 30px;">Login</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+                {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+                {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('usuario_bp.login') }}">
+            <div class="form-group">
+                <label for="login_id">Login ou Email:</label>
+                <input type="text" id="login_id" name="login_id" required>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; margin-top: 15px;">
+                <input type="checkbox" id="remember_me" name="remember_me" style="margin-right: 8px;">
+                <label for="remember_me" style="margin-bottom: 0;">Lembrar-me</label>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">Entrar</button>
+        </form>
+    </div>
+</body>
+
+</html>
