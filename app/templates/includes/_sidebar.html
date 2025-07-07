@@ -26,15 +26,15 @@
             </li>
 
             <li>
-                <a href="#" {# Mude para {{ url_for('conta_bp.list_accounts') }} quando criar #}
-                    class="{% if request.endpoint == 'conta_bp.list_accounts' %}active{% endif %}">
+                <a href="{{ url_for('conta_bp.list_contas') }}"
+                    class="{% if 'conta_bp' in request.endpoint %}active{% endif %}">
                     <i class="fas fa-wallet"></i> Contas
                 </a>
             </li>
 
             {% if current_user.is_authenticated and current_user.is_admin %}
             <li>
-                <a href="{{ url_for('usuario_bp.list_users') }}"
+                <a href="{{ url_for('usuario_bp.list_users') }}" {# ALTERADO: Aponta para a nova rota /list #}
                     class="{% if request.endpoint == 'usuario_bp.list_users' or request.endpoint == 'usuario_bp.add_user' or request.endpoint == 'usuario_bp.edit_user' %}active{% endif %}">
                     <i class="fas fa-users"></i> Usuários
                 </a>

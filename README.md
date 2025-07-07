@@ -2,6 +2,7 @@ web_fin/
 ├── 📄 run.py
 ├── 📄 requirements.txt
 ├── 📄 config.py
+├── 📄 .env
 ├── 📁 venv/
 └── 📁 app/
     ├── 📁 models/
@@ -17,7 +18,10 @@ web_fin/
     │       ├── 🖼️ favicon.png
     │       └── 🖼️ logo.png
     └── 📁 templates/
-        └── 📁 usuarios/
-            ├── 📄 add.html
-            ├── 📄 edit.html
-            └── 📄 list.html
+        ├── 📁 usuarios/
+        │   ├── 📄 add.html
+        │   ├── 📄 edit.html
+        │   └── 📄 list.html
+        ├── 📄 base.html
+        ├── 📄 dashboard.html
+        └── 📄 login.html

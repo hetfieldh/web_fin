@@ -1,5 +1,6 @@
+# app/routes/usuario_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from app.models.usuario_model import Usuario, db 
+from app.models.usuario_model import Usuario, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -8,6 +9,7 @@ usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usu
 @usuario_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        # Se já autenticado, redireciona para o dashboard
         return redirect(url_for('usuario_bp.dashboard'))
 
     if request.method == 'POST':
@@ -21,6 +23,7 @@ def login():
                 login_user(user, remember=True)
                 flash('Login bem-sucedido!', 'success')
                 next_page = request.args.get('next')
+                # Redireciona para a página 'next' se existir, caso contrário, para o dashboard
                 return redirect(next_page or url_for('usuario_bp.dashboard'))
             else:
                 flash('Sua conta está inativa. Por favor, entre em contato com o administrador.', 'danger')
@@ -35,7 +38,14 @@ def logout():
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('usuario_bp.login'))
 
-@usuario_bp.route('/usuarios')
+# Rota para o Dashboard (página principal após o login)
+@usuario_bp.route('/') # Mantém o dashboard como a raiz do Blueprint de usuário
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+# Rota para Listar Usuários (agora em '/list')
+@usuario_bp.route('/list') # ALTERADO: Rota específica para a listagem de usuários
 @login_required
 def list_users():
     if not current_user.is_admin:
@@ -45,7 +55,7 @@ def list_users():
     users = Usuario.query.all()
     return render_template('list.html', users=users)
 
-@usuario_bp.route('/usuarios/add', methods=['GET', 'POST'])
+@usuario_bp.route('/add', methods=['GET', 'POST']) # ALTERADO: Removido '/usuarios' duplicado
 @login_required
 def add_user():
     if not current_user.is_admin:
@@ -86,9 +96,9 @@ def add_user():
         flash('Usuário adicionado com sucesso!', 'success')
         return redirect(url_for('usuario_bp.list_users'))
 
-    return render_template('add.html') 
+    return render_template('add.html')
 
-@usuario_bp.route('/usuarios/edit/<int:user_id>', methods=['GET', 'POST'])
+@usuario_bp.route('/edit/<int:user_id>', methods=['GET', 'POST']) # ALTERADO: Removido '/usuarios' duplicado
 @login_required
 def edit_user(user_id):
     if not current_user.is_admin:
@@ -119,7 +129,7 @@ def edit_user(user_id):
     return render_template('edit.html', user=user)
 
 
-@usuario_bp.route('/usuarios/delete/<int:user_id>', methods=['POST'])
+@usuario_bp.route('/delete/<int:user_id>', methods=['POST']) # ALTERADO: Removido '/usuarios' duplicado
 @login_required
 def delete_user(user_id):
     if not current_user.is_admin:
@@ -135,8 +145,3 @@ def delete_user(user_id):
     db.session.commit()
     flash('Usuário excluído com sucesso!', 'success')
     return redirect(url_for('usuario_bp.list_users'))
-
-@usuario_bp.route('/')
-@login_required 
-def dashboard():
-    return render_template('dashboard.html')

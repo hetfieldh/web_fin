@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Contas Bancárias{% endblock %}
+
+{% block content %}
+<h1>Adicionar Nova Conta</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('conta_bp.add_conta') }}">
+    <div class="form-group">
+        <label for="nome_banco">Nome do Banco:</label>
+        <input type="text" id="nome_banco" name="nome_banco" required
+            value="{{ request.form.nome_banco if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo de Conta:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione um tipo</option>
+            {% for tipo in tipos_conta %}
+            <option value="{{ tipo }}" {% if request.form and request.form.tipo==tipo %}selected{% endif %}>{{ tipo }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="agencia">Agência (opcional):</label>
+        <input type="text" id="agencia" name="agencia" value="{{ request.form.agencia if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="conta">Número da Conta:</label>
+        <input type="text" id="conta" name="conta" required value="{{ request.form.conta if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="saldo_inicial">Saldo Inicial:</label>
+        <input type="text" id="saldo_inicial" name="saldo_inicial"
+            value="{{ request.form.saldo_inicial if request.form else '0.00' }}" placeholder="Ex: 1000.50">
+    </div>
+    <div class="form-group">
+        <label for="limite">Limite (para contas com limite, ex: cartão de crédito):</label>
+        <input type="text" id="limite" name="limite" value="{{ request.form.limite if request.form else '0.00' }}"
+            placeholder="Ex: 500.00">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Adicionar Conta</button>
+    <a href="{{ url_for('conta_bp.list_contas') }}" class="btn-primary"
+        style="background-color: #6c757d; margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

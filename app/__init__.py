@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
@@ -20,8 +20,18 @@ def create_app():
     login_manager.login_message = "Por favor, faça login para acessar esta página."
     login_manager.login_message_category = "info"
 
+    # IMPORTAR BLUEPRINTS 
     from app.routes.usuario_routes import usuario_bp
-    app.register_blueprint(usuario_bp)
+    from app.routes.conta_routes import conta_bp
+
+    # REGISTRAR BLUEPRINTS
+    app.register_blueprint(usuario_bp, url_prefix='/usuarios')
+    app.register_blueprint(conta_bp, url_prefix='/contas') 
+
+    # Rota raiz para redirecionar para o login
+    @app.route('/')
+    def index():
+        return redirect(url_for('usuario_bp.login'))
 
     return app
 
@@ -30,4 +40,5 @@ def init_db():
     with app.app_context():
         db.create_all()
         import app.models.usuario_model
+        import app.models.conta_model
         print("Tabelas do banco de dados criadas/verificadas.")

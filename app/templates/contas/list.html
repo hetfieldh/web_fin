@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Contas Bancárias{% endblock %}
+
+{% block content %}
+<h1>Contas Bancárias</h1>
+
+<a href="{{ url_for('conta_bp.add_conta') }}" class="btn-primary" style="margin-bottom: 20px; display: inline-block;"><i
+        class="fas fa-plus-circle"></i> Adicionar Nova Conta</a>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% if contas %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Banco</th>
+            <th>Tipo</th>
+            <th>Agência</th>
+            <th>Conta</th>
+            <th>Saldo Inicial</th>
+            <th>Limite</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for conta in contas %}
+        <tr>
+            <td>{{ conta.nome_banco }}</td>
+            <td>{{ conta.tipo }}</td>
+            <td>{{ conta.agencia if conta.agencia else '-' }}</td>
+            <td>{{ conta.conta }}</td>
+            <td>R$ {{ "%.2f"|format(conta.saldo_inicial|float) }}</td> {# Formata como moeda #}
+            <td>R$ {{ "%.2f"|format(conta.limite|float) }}</td> {# Formata como moeda #}
+            <td>{{ conta.descricao if conta.descricao else '-' }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('conta_bp.edit_conta', conta_id=conta.id) }}"><i class="fas fa-edit"></i> Editar</a>
+                <form action="{{ url_for('conta_bp.delete_conta', conta_id=conta.id) }}" method="POST"
+                    style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir esta conta? Esta ação é irreversível!');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Você ainda não tem nenhuma conta cadastrada.</p>
+{% endif %}
+{% endblock %}
