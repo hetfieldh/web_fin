@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for # Importe redirect e url_for aqui
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
@@ -20,15 +20,22 @@ def create_app():
     login_manager.login_message = "Por favor, faça login para acessar esta página."
     login_manager.login_message_category = "info"
 
-    # IMPORTAR BLUEPRINTS 
+    # IMPORTAR BLUEPRINTS
     from app.routes.usuario_routes import usuario_bp
     from app.routes.conta_routes import conta_bp
     from app.routes.conta_transacao_routes import conta_transacao_bp
+    from app.routes.configuracoes_routes import configuracoes_bp
+    from app.routes.dashboard_routes import dashboard_bp # NOVO: Importa o blueprint do dashboard
+
 
     # REGISTRAR BLUEPRINTS
+    # O Blueprint de usuário agora gerencia apenas /usuarios/ (listagem) e suas sub-rotas
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
-    app.register_blueprint(conta_bp, url_prefix='/contas') 
+    app.register_blueprint(conta_bp, url_prefix='/contas')
     app.register_blueprint(conta_transacao_bp, url_prefix='/tipos_transacao')
+    app.register_blueprint(configuracoes_bp, url_prefix='/configuracoes')
+    # NOVO: Registra o blueprint do dashboard com seu próprio prefixo
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard') 
 
     # Rota raiz para redirecionar para o login
     @app.route('/')
@@ -40,8 +47,10 @@ def create_app():
 def init_db():
     app = create_app()
     with app.app_context():
-        db.create_all()
+        # Importe todos os modelos para que db.create_all() os detecte
         import app.models.usuario_model
         import app.models.conta_model
         import app.models.conta_transacao_model
+        db.create_all()
         print("Tabelas do banco de dados criadas/verificadas.")
+

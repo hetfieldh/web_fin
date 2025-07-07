@@ -25,3 +25,7 @@ web_fin/
         ├── 📄 base.html
         ├── 📄 dashboard.html
         └── 📄 login.html
+
+Estilo de ícones: 
+- https://fontawesome.com/v6/icons
+

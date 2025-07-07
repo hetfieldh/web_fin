@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Configurações de Perfil{% endblock %}
+
+{% block content %}
+<h1>Configurações de Perfil</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="settings-section">
+    <h2>Atualizar Informações Pessoais</h2>
+    <form method="POST" action="{{ url_for('configuracoes_bp.update_profile') }}">
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" value="{{ user.nome }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <button type="submit" class="btn-primary">Salvar Alterações</button>
+    </form>
+</div>
+
+<div class="settings-section" style="margin-top: 30px;">
+    <h2>Alterar Senha</h2>
+    <form method="POST" action="{{ url_for('configuracoes_bp.change_password') }}">
+        <div class="form-group">
+            <label for="current_password">Senha Atual:</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+        <div class="form-group">
+            <label for="new_password">Nova Senha:</label>
+            <input type="password" id="new_password" name="new_password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Confirmar Nova Senha:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </div>
+        <button type="submit" class="btn-primary">Alterar Senha</button>
+    </form>
+</div>
+
+<style>
+    .settings-section {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+    }
+
+    .settings-section h2 {
+        color: var(--text-primary);
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 10px;
+    }
+
+    .settings-section .form-group {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

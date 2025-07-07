@@ -9,8 +9,8 @@ usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usu
 @usuario_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # Se já autenticado, redireciona para o dashboard
-        return redirect(url_for('usuario_bp.dashboard'))
+        # Redireciona para o NOVO dashboard_bp.dashboard
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     if request.method == 'POST':
         login_id = request.form.get('login_id')
@@ -23,8 +23,8 @@ def login():
                 login_user(user, remember=True)
                 flash('Login bem-sucedido!', 'success')
                 next_page = request.args.get('next')
-                # Redireciona para a página 'next' se existir, caso contrário, para o dashboard
-                return redirect(next_page or url_for('usuario_bp.dashboard'))
+                # Redireciona para o NOVO dashboard_bp.dashboard
+                return redirect(next_page or url_for('dashboard_bp.dashboard'))
             else:
                 flash('Sua conta está inativa. Por favor, entre em contato com o administrador.', 'danger')
         else:
@@ -38,29 +38,25 @@ def logout():
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('usuario_bp.login'))
 
-# Rota para o Dashboard (página principal após o login)
-@usuario_bp.route('/') # Mantém o dashboard como a raiz do Blueprint de usuário
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
-
-# Rota para Listar Usuários (agora em '/list')
-@usuario_bp.route('/list') # ALTERADO: Rota específica para a listagem de usuários
+# Rota para Listar Usuários (agora é a raiz do Blueprint de usuário: /usuarios/)
+@usuario_bp.route('/') # ALTERADO: Rota agora é a raiz do Blueprint de usuário
 @login_required
 def list_users():
     if not current_user.is_admin:
         flash('Você não tem permissão para acessar esta página.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        # Redireciona para o NOVO dashboard_bp.dashboard
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     users = Usuario.query.all()
     return render_template('list.html', users=users)
 
-@usuario_bp.route('/add', methods=['GET', 'POST']) # ALTERADO: Removido '/usuarios' duplicado
+@usuario_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_user():
     if not current_user.is_admin:
         flash('Você não tem permissão para adicionar usuários.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        # Redireciona para o NOVO dashboard_bp.dashboard
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -98,12 +94,13 @@ def add_user():
 
     return render_template('add.html')
 
-@usuario_bp.route('/edit/<int:user_id>', methods=['GET', 'POST']) # ALTERADO: Removido '/usuarios' duplicado
+@usuario_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para editar usuários.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        # Redireciona para o NOVO dashboard_bp.dashboard
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     user = Usuario.query.get_or_404(user_id)
 
@@ -129,12 +126,13 @@ def edit_user(user_id):
     return render_template('edit.html', user=user)
 
 
-@usuario_bp.route('/delete/<int:user_id>', methods=['POST']) # ALTERADO: Removido '/usuarios' duplicado
+@usuario_bp.route('/delete/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para excluir usuários.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        # Redireciona para o NOVO dashboard_bp.dashboard
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     user = Usuario.query.get_or_404(user_id)
     if user.id == current_user.id:
