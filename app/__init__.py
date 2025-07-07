@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for # Importe redirect e url_for aqui
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user # Importe current_user aqui
 from config import Config
 from dotenv import load_dotenv
 
@@ -25,21 +25,21 @@ def create_app():
     from app.routes.conta_routes import conta_bp
     from app.routes.conta_transacao_routes import conta_transacao_bp
     from app.routes.configuracoes_routes import configuracoes_bp
-    from app.routes.dashboard_routes import dashboard_bp # NOVO: Importa o blueprint do dashboard
+    from app.routes.dashboard_routes import dashboard_bp 
 
 
     # REGISTRAR BLUEPRINTS
-    # O Blueprint de usuário agora gerencia apenas /usuarios/ (listagem) e suas sub-rotas
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
     app.register_blueprint(conta_bp, url_prefix='/contas')
     app.register_blueprint(conta_transacao_bp, url_prefix='/tipos_transacao')
     app.register_blueprint(configuracoes_bp, url_prefix='/configuracoes')
-    # NOVO: Registra o blueprint do dashboard com seu próprio prefixo
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard') 
 
-    # Rota raiz para redirecionar para o login
+    # Rota raiz para redirecionar para o login ou para a página inicial padrão
     @app.route('/')
     def index():
+        if current_user.is_authenticated:
+            return redirect(url_for(current_user.default_homepage)) # ALTERADO
         return redirect(url_for('usuario_bp.login'))
 
     return app

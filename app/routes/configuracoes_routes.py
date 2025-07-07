@@ -16,9 +16,17 @@ def settings():
     # Redireciona administradores para o dashboard, pois eles gerenciam usuários em outro local
     if current_user.is_admin:
         flash('Administradores gerenciam usuários na seção "Usuários".', 'info')
-        return redirect(url_for('usuario_bp.dashboard'))
+        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
 
-    return render_template('configuracoes/settings.html', user=current_user)
+    # Lista de opções para a página inicial padrão
+    homepage_options = [
+        ('dashboard_bp.dashboard', 'Dashboard'),
+        ('conta_bp.list_contas', 'Minhas Contas'),
+        ('conta_transacao_bp.list_tipos_transacao', 'Tipos de Transação')
+        # Adicione mais opções aqui conforme novas funcionalidades forem criadas
+    ]
+
+    return render_template('configuracoes/settings.html', user=current_user, homepage_options=homepage_options)
 
 # --- Rota para Atualizar Nome e Email do Perfil ---
 @configuracoes_bp.route('/settings/update_profile', methods=['POST'])
@@ -26,7 +34,7 @@ def settings():
 def update_profile():
     if current_user.is_admin:
         flash('Administradores não podem alterar seus próprios dados de perfil por esta rota.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
 
     new_nome = request.form.get('nome')
     new_email = request.form.get('email')
@@ -62,7 +70,7 @@ def update_profile():
 def change_password():
     if current_user.is_admin:
         flash('Administradores não podem alterar suas senhas por esta rota.', 'danger')
-        return redirect(url_for('usuario_bp.dashboard'))
+        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
 
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
@@ -91,6 +99,36 @@ def change_password():
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao alterar senha: {e}', 'danger')
+
+    return redirect(url_for('configuracoes_bp.settings'))
+
+# --- NOVO: Rota para Atualizar Página Inicial Padrão ---
+@configuracoes_bp.route('/settings/update_homepage', methods=['POST'])
+@login_required
+def update_homepage():
+    if current_user.is_admin:
+        flash('Administradores não podem alterar a página inicial padrão por esta rota.', 'danger')
+        return redirect(url_for('dashboard_bp.dashboard'))
+
+    new_homepage = request.form.get('default_homepage')
+
+    # Validação para garantir que a rota selecionada é uma das opções válidas
+    valid_homepage_routes = [
+        'dashboard_bp.dashboard',
+        'conta_bp.list_contas',
+        'conta_transacao_bp.list_tipos_transacao'
+    ]
+    if new_homepage not in valid_homepage_routes:
+        flash('Página inicial padrão inválida selecionada.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+
+    try:
+        current_user.default_homepage = new_homepage
+        db.session.commit()
+        flash('Página inicial padrão atualizada com sucesso!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao atualizar página inicial padrão: {e}', 'danger')
 
     return redirect(url_for('configuracoes_bp.settings'))
 

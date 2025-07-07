@@ -54,6 +54,23 @@
     </form>
 </div>
 
+{# NOVO: Seção para Página Inicial Padrão #}
+<div class="settings-section" style="margin-top: 30px;">
+    <h2>Página Inicial Padrão</h2>
+    <form method="POST" action="{{ url_for('configuracoes_bp.update_homepage') }}">
+        <div class="form-group">
+            <label for="default_homepage">Escolha sua página inicial:</label>
+            <select id="default_homepage" name="default_homepage" required>
+                {% for value, label in homepage_options %}
+                <option value="{{ value }}" {% if user.default_homepage==value %}selected{% endif %}>{{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn-primary">Salvar Página Inicial</button>
+    </form>
+</div>
+
 <style>
     .settings-section {
         background-color: #FFF;

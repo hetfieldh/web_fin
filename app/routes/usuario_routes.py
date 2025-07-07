@@ -9,8 +9,8 @@ usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usu
 @usuario_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # Redireciona para o NOVO dashboard_bp.dashboard
-        return redirect(url_for('dashboard_bp.dashboard'))
+        # Redireciona para a página inicial padrão do usuário
+        return redirect(url_for(current_user.default_homepage)) # ALTERADO
 
     if request.method == 'POST':
         login_id = request.form.get('login_id')
@@ -23,8 +23,8 @@ def login():
                 login_user(user, remember=True)
                 flash('Login bem-sucedido!', 'success')
                 next_page = request.args.get('next')
-                # Redireciona para o NOVO dashboard_bp.dashboard
-                return redirect(next_page or url_for('dashboard_bp.dashboard'))
+                # Redireciona para a página 'next' se existir, caso contrário, para a página inicial padrão do usuário
+                return redirect(next_page or url_for(user.default_homepage)) # ALTERADO
             else:
                 flash('Sua conta está inativa. Por favor, entre em contato com o administrador.', 'danger')
         else:
@@ -39,13 +39,13 @@ def logout():
     return redirect(url_for('usuario_bp.login'))
 
 # Rota para Listar Usuários (agora é a raiz do Blueprint de usuário: /usuarios/)
-@usuario_bp.route('/') # ALTERADO: Rota agora é a raiz do Blueprint de usuário
+@usuario_bp.route('/')
 @login_required
 def list_users():
     if not current_user.is_admin:
         flash('Você não tem permissão para acessar esta página.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
-        return redirect(url_for('dashboard_bp.dashboard'))
+        # Redireciona para a página inicial padrão do usuário
+        return redirect(url_for(current_user.default_homepage)) # ALTERADO
 
     users = Usuario.query.all()
     return render_template('list.html', users=users)
@@ -55,8 +55,8 @@ def list_users():
 def add_user():
     if not current_user.is_admin:
         flash('Você não tem permissão para adicionar usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
-        return redirect(url_for('dashboard_bp.dashboard'))
+        # Redireciona para a página inicial padrão do usuário
+        return redirect(url_for(current_user.default_homepage)) # ALTERADO
 
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -99,8 +99,8 @@ def add_user():
 def edit_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para editar usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
-        return redirect(url_for('dashboard_bp.dashboard'))
+        # Redireciona para a página inicial padrão do usuário
+        return redirect(url_for(current_user.default_homepage)) # ALTERADO
 
     user = Usuario.query.get_or_404(user_id)
 
@@ -131,8 +131,8 @@ def edit_user(user_id):
 def delete_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para excluir usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
-        return redirect(url_for('dashboard_bp.dashboard'))
+        # Redireciona para a página inicial padrão do usuário
+        return redirect(url_for(current_user.default_homepage)) # ALTERADO
 
     user = Usuario.query.get_or_404(user_id)
     if user.id == current_user.id:
