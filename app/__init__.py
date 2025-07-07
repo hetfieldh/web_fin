@@ -23,10 +23,12 @@ def create_app():
     # IMPORTAR BLUEPRINTS 
     from app.routes.usuario_routes import usuario_bp
     from app.routes.conta_routes import conta_bp
+    from app.routes.conta_transacao_routes import conta_transacao_bp
 
     # REGISTRAR BLUEPRINTS
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
     app.register_blueprint(conta_bp, url_prefix='/contas') 
+    app.register_blueprint(conta_transacao_bp, url_prefix='/tipos_transacao')
 
     # Rota raiz para redirecionar para o login
     @app.route('/')
@@ -41,4 +43,5 @@ def init_db():
         db.create_all()
         import app.models.usuario_model
         import app.models.conta_model
+        import app.models.conta_transacao_model
         print("Tabelas do banco de dados criadas/verificadas.")

@@ -1,8 +1,11 @@
 /* Variáveis CSS para cores */
 :root {
     --bg-primary: #F8F9FA;
-    --text-primary: #1c1d1d;
-    --accent-blue: #007BFF;
+    --text-primary: #4c4c4c;
+    --text-secondary: #34465D;
+    --accent-blue: #1d5298;
+    --back-button: #905815;
+    --submenu-button: #127c3d;
     --border-light: #DEE2E6;
     --sidebar-bg: #34465D;
     --sidebar-text: #f5f6f7;
@@ -15,23 +18,18 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     display: flex;
-    /* Usar flexbox para layout de sidebar e conteúdo */
     min-height: 100vh;
-    /* Garante que o body ocupe a altura total da viewport */
 }
 
 /* Sidebar */
 .sidebar {
     width: 230px;
-    /* Largura fixa */
     background-color: var(--sidebar-bg);
     padding: 5px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    /* Sombra sutil para profundidade */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* Empurra o rodapé da sidebar para baixo */
 }
 
 .sidebar .logo {
@@ -56,7 +54,6 @@ body {
 
 .sidebar nav ul li a {
     display: flex;
-    /* Para alinhar ícone e texto */
     align-items: center;
     padding: 3px 5px;
     text-decoration: none;
@@ -66,7 +63,6 @@ body {
 }
 
 .sidebar nav ul li a i {
-    /* Estilo para ícones */
     margin-right: 10px;
     font-size: 0.85em;
 }
@@ -74,28 +70,21 @@ body {
 .sidebar nav ul li a:hover,
 .sidebar nav ul li a.active {
     background-color: var(--border-light);
-    /* Cor de hover/ativo mais clara */
-    color: var(--accent-blue);
-    /* Texto azul no hover/ativo */
+    color: var(--sidebar-bg);
 }
 
 /* Estilo para o texto do rodapé da sidebar */
 .sidebar-footer .footer-text {
     color: #a19d9d;
-    /* Um cinza um pouco mais escuro, por exemplo */
     font-size: 0.85em;
-    /* Opcional: para deixá-lo um pouco menor */
     margin-top: 15px;
-    /* Opcional: Adiciona um espaçamento acima */
 }
 
 /* Conteúdo Principal */
 .main-content {
     flex-grow: 1;
-    /* Ocupa o espaço restante */
     padding: 10px;
     overflow-y: auto;
-    /* Permite rolagem se o conteúdo for muito longo */
 }
 
 .main-content h1 {
@@ -108,16 +97,11 @@ body {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    /* Remove espaçamento entre células */
     margin-top: 5px;
     background-color: #FFF;
-    /* Fundo branco para a tabela */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    /* Sombra sutil */
     border-radius: 8px;
-    /* Cantos arredondados */
     overflow: hidden;
-    /* Garante que bordas arredondadas funcionem */
 }
 
 .data-table th,
@@ -129,21 +113,17 @@ body {
 
 .data-table th {
     background-color: var(--sidebar-bg);
-    /* Cabeçalho da tabela com cor da sidebar */
     padding: 7px 15px;
     color: var(--sidebar-text);
     font-weight: 500;
 }
 
 .data-table tbody tr:nth-child(even) {
-    /* Linhas alternadas */
     background-color: rgba(0, 0, 0, 0.06);
-    /* Muito sutil para linhas pares */
 }
 
 .data-table tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.05);
-    /* Hover sutil */
 }
 
 /* Estilo para Botões e Links de Ação em Tabelas */
@@ -174,29 +154,59 @@ body {
 .form-group input[type="password"],
 .form-group select {
     width: calc(100% - 22px);
-    /* Ajuste para padding e borda */
     padding: 10px;
     border: 1px solid var(--border-light);
     border-radius: 5px;
     font-size: 1em;
     box-sizing: border-box;
-    /* Inclui padding e borda no width */
 }
 
 .btn-primary {
     background-color: var(--accent-blue);
     color: white;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.8em;
     transition: background-color 0.2s ease;
+    text-decoration: none;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    /* Um tom mais escuro no hover */
+    background-color: #002c5b;
+}
+
+.btn-secondary {
+    background-color: var(--back-button);
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background-color: #574000;
+}
+
+.btn-submenu {
+    background-color: var(--submenu-button);
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-submenu:hover {
+    background-color: #005d25;
 }
 
 /* --- Estilos para Flash Messages (Mensagens de Alerta) --- */
@@ -205,43 +215,34 @@ body {
     margin-bottom: 20px;
     border-radius: 6px;
     border: 1px solid transparent;
-    /* Padrão transparente, as classes específicas darão a cor */
     font-size: 0.95em;
     display: flex;
     align-items: center;
 }
 
 .alert i {
-    /* Estilo para ícones dentro das mensagens, se usar */
     margin-right: 10px;
 }
 
 .alert.alert-success {
     background-color: #d4edda;
-    /* Verde claro */
     color: #155724;
-    /* Verde escuro */
     border-color: #c3e6cb;
 }
 
 .alert.alert-danger {
     background-color: #f8d7da;
-    /* Vermelho claro */
     color: #721c24;
-    /* Vermelho escuro */
     border-color: #f5c6cb;
 }
 
 .alert.alert-info {
     background-color: #d1ecf1;
-    /* Azul claro */
     color: #0c5460;
-    /* Azul escuro */
     border-color: #bee5eb;
 }
 
 .alert.alert-warning {
-    /* Se quiser adicionar alertas de aviso */
     background-color: #fff3cd;
     color: #856404;
     border-color: #ffeeba;

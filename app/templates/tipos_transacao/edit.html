@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Editar Tipo de Transação{% endblock %}
+
+{% block content %}
+<h1>Editar Tipo de Transação: {{ tipo_transacao.transacao }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('conta_transacao_bp.edit_tipo_transacao', transacao_id=tipo_transacao.id) }}">
+    <div class="form-group">
+        <label for="transacao">Nome da Transação:</label>
+        <input type="text" id="transacao" name="transacao" value="{{ tipo_transacao.transacao }}" required>
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo (Natureza):</label>
+        <select id="tipo" name="tipo" required>
+            {% for natureza in tipos_natureza %}
+            <option value="{{ natureza }}" {% if tipo_transacao.tipo==natureza %}selected{% endif %}>{{ natureza }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao"
+            value="{{ tipo_transacao.descricao if tipo_transacao.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('conta_transacao_bp.list_tipos_transacao') }}" class="btn-primary"
+        style="background-color: #6c757d; margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

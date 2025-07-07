@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Tipos de Transação{% endblock %}
+
+{% block content %}
+<h1>Tipos de Transação</h1>
+
+<a href="{{ url_for('conta_transacao_bp.add_tipo_transacao') }}" class="btn-primary"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-plus-circle"></i> Adicionar</a>
+
+<a href="{{ url_for('conta_bp.list_contas') }}" class="btn-secondary"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-arrow-left"></i> Voltar</a>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% if tipos_transacao %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Nome da Transação</th>
+            <th>Tipo (Crédito/Débito)</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tipo in tipos_transacao %}
+        <tr>
+            <td>{{ tipo.transacao }}</td>
+            <td>{{ tipo.tipo }}</td>
+            <td>{{ tipo.descricao if tipo.descricao else '-' }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('conta_transacao_bp.edit_tipo_transacao', transacao_id=tipo.id) }}"><i
+                        class="fas fa-edit"></i> Editar</a>
+                <form action="{{ url_for('conta_transacao_bp.delete_tipo_transacao', transacao_id=tipo.id) }}"
+                    method="POST" style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir este tipo de transação?');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Você ainda não tem nenhum tipo de transação cadastrado.</p>
+{% endif %}
+{% endblock %}
