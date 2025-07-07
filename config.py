@@ -10,6 +10,3 @@ class Config:
     REMEMBER_COOKIE_SECURE = True # Apenas envia o cookie via HTTPS
     REMEMBER_COOKIE_HTTPONLY = True # Impede acesso via JavaScript
     REMEMBER_COOKIE_SAMESITE = 'Lax' # Proteção CSRF
-
-    # Outras configurações (pode adicionar mais conforme a necessidade)
-    DEBUG = True # Mude para False em produção

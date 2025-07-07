@@ -93,14 +93,14 @@ body {
 .main-content {
     flex-grow: 1;
     /* Ocupa o espaço restante */
-    padding: 30px;
+    padding: 10px;
     overflow-y: auto;
     /* Permite rolagem se o conteúdo for muito longo */
 }
 
 .main-content h1 {
     color: var(--text-primary);
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     font-size: 2em;
 }
 
@@ -109,7 +109,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     /* Remove espaçamento entre células */
-    margin-top: 20px;
+    margin-top: 5px;
     background-color: #FFF;
     /* Fundo branco para a tabela */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -122,7 +122,7 @@ body {
 
 .data-table th,
 .data-table td {
-    padding: 12px 15px;
+    padding: 2px 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-light);
 }
@@ -130,13 +130,14 @@ body {
 .data-table th {
     background-color: var(--sidebar-bg);
     /* Cabeçalho da tabela com cor da sidebar */
+    padding: 7px 15px;
     color: var(--sidebar-text);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .data-table tbody tr:nth-child(even) {
     /* Linhas alternadas */
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: rgba(0, 0, 0, 0.06);
     /* Muito sutil para linhas pares */
 }
 
@@ -159,7 +160,7 @@ body {
 
 /* Formulários */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .form-group label {

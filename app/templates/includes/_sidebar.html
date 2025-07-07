@@ -1,11 +1,9 @@
-{# app/templates/includes/_sidebar.html #}
 <div class="sidebar">
     <div class="logo">
         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="WebFin Logo">
     </div>
     <nav>
         <ul>
-            {# Dashboard Link #}
             <li>
                 <a href="{{ url_for('usuario_bp.dashboard') }}"
                     class="{% if request.endpoint == 'usuario_bp.dashboard' %}active{% endif %}">
@@ -13,7 +11,6 @@
                 </a>
             </li>
 
-            {# Transações Link (futuro) #}
             <li>
                 <a href="#" {# Mude para {{ url_for('transacao_bp.list_transactions') }} quando criar #}
                     class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
@@ -21,7 +18,6 @@
                 </a>
             </li>
 
-            {# Categorias Link (futuro) #}
             <li>
                 <a href="#" {# Mude para {{ url_for('categoria_bp.list_categories') }} quando criar #}
                     class="{% if request.endpoint == 'categoria_bp.list_categories' %}active{% endif %}">
@@ -29,7 +25,6 @@
                 </a>
             </li>
 
-            {# Contas Link (futuro) #}
             <li>
                 <a href="#" {# Mude para {{ url_for('conta_bp.list_accounts') }} quando criar #}
                     class="{% if request.endpoint == 'conta_bp.list_accounts' %}active{% endif %}">
@@ -37,7 +32,6 @@
                 </a>
             </li>
 
-            {# Usuários Link (Apenas para administradores) #}
             {% if current_user.is_authenticated and current_user.is_admin %}
             <li>
                 <a href="{{ url_for('usuario_bp.list_users') }}"
@@ -47,7 +41,6 @@
             </li>
             {% endif %}
 
-            {# Configurações Link (futuro) #}
             <li>
                 <a href="#" {# Mude para {{ url_for('configuracoes_bp.settings') }} quando criar #}
                     class="{% if request.endpoint == 'configuracoes_bp.settings' %}active{% endif %}">
@@ -55,7 +48,6 @@
                 </a>
             </li>
 
-            {# Sair Link #}
             <li>
                 <a href="{{ url_for('usuario_bp.logout') }}"
                     class="{% if request.endpoint == 'usuario_bp.logout' %}active{% endif %}">

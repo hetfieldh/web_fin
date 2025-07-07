@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Usuário - WebFin{% endblock %}
+{% block title %}WebFin - Usuários{% endblock %}
 
 {% block content %}
 <h1>Editar Usuário: {{ user.nome }}</h1>
@@ -37,7 +37,6 @@
         <label for="senha">Nova Senha (deixe em branco para não alterar):</label>
         <input type="password" id="senha" name="senha">
     </div>
-    {# Removed: Perfil selection field #}
     <div class="form-group" style="display: flex; align-items: center;">
         <input type="checkbox" id="is_active" name="is_active" {% if user.is_active %}checked{% endif %}
             style="margin-right: 8px;">
