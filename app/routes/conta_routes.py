@@ -12,51 +12,79 @@ conta_bp = Blueprint('conta_bp', __name__, template_folder='../templates/contas'
 @conta_bp.route('/')
 @login_required
 def list_contas():
-    # Apenas listar as contas do usuário logado
     contas = Conta.query.filter_by(usuario_id=current_user.id).order_by(Conta.nome_banco).all()
-    # Explicitamente especifica o caminho completo do template dentro da pasta templates
     return render_template('contas/list.html', contas=contas)
 
 # --- Rota para Adicionar Nova Conta ---
 @conta_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_conta():
-    # Obtém os valores possíveis para o ENUM 'tipo' usando .enums
-    tipos_conta = tipo_conta_enum.enums # CORRIGIDO: Usando .enums
+    tipos_conta = tipo_conta_enum.enums # Obtém os valores exatos do ENUM
 
     if request.method == 'POST':
         nome_banco = request.form.get('nome_banco')
         agencia = request.form.get('agencia')
         conta_num = request.form.get('conta')
-        tipo = request.form.get('tipo')
+        tipo_from_form = request.form.get('tipo')
         saldo_inicial_str = request.form.get('saldo_inicial')
         limite_str = request.form.get('limite')
         descricao = request.form.get('descricao')
 
-        # Validação básica
-        if not (nome_banco and conta_num and tipo):
+        # --- Validações Iniciais ---
+        if not (nome_banco and conta_num and tipo_from_form):
             flash('Por favor, preencha todos os campos obrigatórios (Banco, Número da Conta, Tipo).', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
 
-        try:
-            # Converte vírgula para ponto para permitir float()
-            saldo_inicial = float(saldo_inicial_str.replace(',', '.')) if saldo_inicial_str else 0.00
-            limite = float(limite_str.replace(',', '.')) if limite_str else 0.00
-        except ValueError:
-            flash('Saldo inicial e Limite devem ser números válidos.', 'danger')
+        # 1. Validação e formatação de Agência
+        if agencia: # Agência é opcional, mas se preenchida, deve ser validada
+            if not agencia.isdigit() or len(agencia) > 4:
+                flash('Agência deve conter no máximo 4 números.', 'danger')
+                return render_template('contas/add.html', tipos_conta=tipos_conta)
+            agencia = agencia.zfill(4) # Completa com zeros à esquerda
+
+        # 2. Validação de Número de Conta (apenas números)
+        if not conta_num.isdigit():
+            flash('Número da Conta deve conter apenas números.', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
+
+        # 3. Validação do Tipo de Conta (ENUM)
+        tipo_to_save = None
+        if tipo_from_form in tipos_conta:
+            tipo_to_save = tipo_from_form
         
-        # Validação do tipo de conta para garantir que está no ENUM
-        if tipo not in tipos_conta:
+        if tipo_to_save is None:
             flash('Tipo de conta inválido selecionado.', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
 
+        # 4. Validação de Saldo Inicial e Limite (numéricos e >= 0)
+        try:
+            saldo_inicial = float(saldo_inicial_str.replace(',', '.')) if saldo_inicial_str else 0.00
+            if saldo_inicial < 0:
+                flash('Saldo Inicial não pode ser negativo.', 'danger')
+                return render_template('contas/add.html', tipos_conta=tipos_conta)
+
+            limite = float(limite_str.replace(',', '.')) if limite_str else 0.00
+            if limite < 0:
+                flash('Limite não pode ser negativo.', 'danger')
+                return render_template('contas/add.html', tipos_conta=tipos_conta)
+
+        except ValueError:
+            flash('Saldo Inicial e Limite devem ser números válidos.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
+        
+        # 5. Validação Condicional do Limite (apenas para Corrente e Digital)
+        if tipo_to_save not in ['Corrente', 'Digital']:
+            if limite > 0:
+                flash('Limite só é aplicável para contas do tipo Corrente ou Digital. O limite foi definido como 0.', 'warning')
+            limite = 0.00 # Força o limite a ser zero para outros tipos
+
+        # --- Criação e Persistência da Conta ---
         new_conta = Conta(
             usuario_id=current_user.id,
             nome_banco=nome_banco,
             agencia=agencia,
             conta=conta_num,
-            tipo=tipo,
+            tipo=tipo_to_save,
             saldo_inicial=saldo_inicial,
             limite=limite,
             descricao=descricao
@@ -80,28 +108,34 @@ def add_conta():
 @login_required
 def edit_conta(conta_id):
     conta = Conta.query.filter_by(id=conta_id, usuario_id=current_user.id).first_or_404()
-    # Obtém os valores possíveis para o ENUM 'tipo' usando .enums
-    tipos_conta = tipo_conta_enum.enums # CORRIGIDO: Usando .enums
+    tipos_conta = tipo_conta_enum.enums
 
     if request.method == 'POST':
-        conta.nome_banco = request.form.get('nome_banco')
-        conta.agencia = request.form.get('agencia')
-        conta.conta = request.form.get('conta')
-        conta.tipo = request.form.get('tipo')
-        saldo_inicial_str = request.form.get('saldo_inicial')
+        # Campos não editáveis via POST (Nome do Banco, Agência, Conta, Tipo, Saldo Inicial)
+        # Os valores desses campos serão lidos do objeto 'conta' já existente
+
         limite_str = request.form.get('limite')
-        conta.descricao = request.form.get('descricao')
+        descricao = request.form.get('descricao')
 
+        # 1. Validação de Limite (numérico e >= 0)
         try:
-            saldo_inicial = float(saldo_inicial_str.replace(',', '.')) if saldo_inicial_str else 0.00
             limite = float(limite_str.replace(',', '.')) if limite_str else 0.00
+            if limite < 0:
+                flash('Limite não pode ser negativo.', 'danger')
+                return render_template('contas/edit.html', conta=conta, tipos_conta=tipos_conta)
         except ValueError:
-            flash('Saldo inicial e Limite devem ser números válidos.', 'danger')
+            flash('Limite deve ser um número válido.', 'danger')
             return render_template('contas/edit.html', conta=conta, tipos_conta=tipos_conta)
 
-        if conta.tipo not in tipos_conta:
-            flash('Tipo de conta inválido selecionado.', 'danger')
-            return render_template('contas/edit.html', conta=conta, tipos_conta=tipos_conta)
+        # 2. Validação Condicional do Limite (apenas para Corrente e Digital)
+        if conta.tipo not in ['Corrente', 'Digital']: # Usa conta.tipo, que é o tipo original da conta
+            if limite > 0:
+                flash('Limite só é aplicável para contas do tipo Corrente ou Digital. O limite foi definido como 0.', 'warning')
+            conta.limite = 0.00 # Força o limite a ser zero para outros tipos
+        else:
+            conta.limite = limite # Atribui o limite se o tipo for Corrente ou Digital
+
+        conta.descricao = descricao
 
         try:
             db.session.commit()
@@ -109,7 +143,7 @@ def edit_conta(conta_id):
             return redirect(url_for('conta_bp.list_contas'))
         except IntegrityError:
             db.session.rollback()
-            flash('Já existe outra conta com esses dados (Banco, Agência, Conta, Tipo) para este usuário.', 'danger')
+            flash('Erro de integridade ao atualizar conta. Verifique os dados.', 'danger') 
         except Exception as e:
             db.session.rollback()
             flash(f'Erro ao atualizar conta: {e}', 'danger')

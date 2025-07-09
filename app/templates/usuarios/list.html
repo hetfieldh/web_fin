@@ -2,9 +2,11 @@
 
 {% block title %}WebFin - Usuários{% endblock %}
 
-{% block content %}
+{% block topbar_content %}
 <h1>Usuários</h1>
+{% endblock %}
 
+{% block content %}
 <a href="{{ url_for('usuario_bp.add_user') }}" class="btn-primary"
     style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-user-plus"></i> Adicionar</a>
 

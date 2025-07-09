@@ -2,9 +2,11 @@
 
 {% block title %}WebFin - Tipos de Transação{% endblock %}
 
-{% block content %}
+{% block topbar_content %}
 <h1>Tipos de Transação</h1>
+{% endblock %}
 
+{% block content %}
 <a href="{{ url_for('conta_transacao_bp.add_tipo_transacao') }}" class="btn-primary"
     style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-plus-circle"></i> Adicionar</a>
 

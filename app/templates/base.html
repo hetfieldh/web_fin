@@ -15,7 +15,15 @@
     {% include 'includes/_sidebar.html' %}
 
     <div class="main-content">
-        {% block content %}{% endblock %}
+        {# NOVO: Div para a topbar #}
+        <div class="topbar">
+            {# O conteúdo da topbar (título da página, mensagens flash) será definido nos templates filhos #}
+            {% block topbar_content %}{% endblock %}
+        </div>
+        {# NOVO: Div para a área de conteúdo principal que rolará #}
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

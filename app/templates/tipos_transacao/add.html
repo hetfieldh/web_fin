@@ -2,9 +2,11 @@
 
 {% block title %}WebFin - Adicionar Tipo de Transação{% endblock %}
 
-{% block content %}
+{% block topbar_content %}
 <h1>Adicionar Novo Tipo de Transação</h1>
+{% endblock %}
 
+{% block content %}
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 <div class="flash-messages">

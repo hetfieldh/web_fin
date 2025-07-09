@@ -2,7 +2,8 @@
 
 {% block title %}WebFin - Configurações de Perfil{% endblock %}
 
-{% block content %}
+{# NOVO: Conteúdo da topbar para o título da página e mensagens flash #}
+{% block topbar_content %}
 <h1>Configurações de Perfil</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -19,7 +20,10 @@
 </div>
 {% endif %}
 {% endwith %}
+{% endblock %}
 
+{# Conteúdo principal da página, que agora estará dentro de .content-area e rolará #}
+{% block content %}
 <div class="settings-section">
     <h2>Atualizar Informações Pessoais</h2>
     <form method="POST" action="{{ url_for('configuracoes_bp.update_profile') }}">
@@ -54,7 +58,7 @@
     </form>
 </div>
 
-{# NOVO: Seção para Página Inicial Padrão #}
+{# Seção para Página Inicial Padrão #}
 <div class="settings-section" style="margin-top: 30px;">
     <h2>Página Inicial Padrão</h2>
     <form method="POST" action="{{ url_for('configuracoes_bp.update_homepage') }}">
@@ -71,6 +75,7 @@
     </form>
 </div>
 
+{# Estilos específicos da página, que podem ficar aqui ou ser movidos para o CSS principal se forem reutilizáveis #}
 <style>
     .settings-section {
         background-color: #FFF;

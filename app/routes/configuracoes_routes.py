@@ -1,7 +1,7 @@
 # app/routes/configuracoes_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
-from app import db
+from flask_login import login_required, current_user, login_user # Importar login_user
+from app import db, login_manager # Importar login_manager
 from app.models.usuario_model import Usuario # Importa o modelo de usuário
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
@@ -16,7 +16,7 @@ def settings():
     # Redireciona administradores para o dashboard, pois eles gerenciam usuários em outro local
     if current_user.is_admin:
         flash('Administradores gerenciam usuários na seção "Usuários".', 'info')
-        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     # Lista de opções para a página inicial padrão
     homepage_options = [
@@ -34,7 +34,7 @@ def settings():
 def update_profile():
     if current_user.is_admin:
         flash('Administradores não podem alterar seus próprios dados de perfil por esta rota.', 'danger')
-        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     new_nome = request.form.get('nome')
     new_email = request.form.get('email')
@@ -58,6 +58,8 @@ def update_profile():
         current_user.email = new_email
         db.session.commit()
         flash('Perfil atualizado com sucesso!', 'success')
+        # Após a atualização, recarrega o usuário na sessão para refletir as mudanças
+        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao atualizar perfil: {e}', 'danger')
@@ -70,7 +72,7 @@ def update_profile():
 def change_password():
     if current_user.is_admin:
         flash('Administradores não podem alterar suas senhas por esta rota.', 'danger')
-        return redirect(url_for('dashboard_bp.dashboard')) # Alterado para dashboard_bp
+        return redirect(url_for('dashboard_bp.dashboard'))
 
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
@@ -96,13 +98,15 @@ def change_password():
         current_user.senha_hash = generate_password_hash(new_password)
         db.session.commit()
         flash('Senha alterada com sucesso!', 'success')
+        # Após a atualização, recarrega o usuário na sessão para refletir as mudanças
+        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao alterar senha: {e}', 'danger')
 
     return redirect(url_for('configuracoes_bp.settings'))
 
-# --- NOVO: Rota para Atualizar Página Inicial Padrão ---
+# --- Rota para Atualizar Página Inicial Padrão ---
 @configuracoes_bp.route('/settings/update_homepage', methods=['POST'])
 @login_required
 def update_homepage():
@@ -112,7 +116,7 @@ def update_homepage():
 
     new_homepage = request.form.get('default_homepage')
 
-    # Validação para garantir que a rota selecionada é uma das opções válidas
+    # Lista de opções válidas para a página inicial padrão
     valid_homepage_routes = [
         'dashboard_bp.dashboard',
         'conta_bp.list_contas',
@@ -126,6 +130,11 @@ def update_homepage():
         current_user.default_homepage = new_homepage
         db.session.commit()
         flash('Página inicial padrão atualizada com sucesso!', 'success')
+        
+        # ESSENCIAL: Recarregar o usuário na sessão do Flask-Login
+        # Isso garante que o 'current_user' reflita a mudança imediatamente
+        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
+            
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao atualizar página inicial padrão: {e}', 'danger')

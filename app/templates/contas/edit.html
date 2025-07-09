@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}WebFin - Contas Bancárias{% endblock %}
+{% block title %}WebFin - Editar Conta{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar Conta: {{ conta.nome_banco }} - {{ conta.conta }}</h1>
+{% endblock %}
 
 {% block content %}
-<h1>Editar Conta: {{ conta.nome_banco }} - {{ conta.conta }}</h1>
-
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 <div class="flash-messages">
@@ -23,36 +25,45 @@
 <form method="POST" action="{{ url_for('conta_bp.edit_conta', conta_id=conta.id) }}">
     <div class="form-group">
         <label for="nome_banco">Nome do Banco:</label>
-        <input type="text" id="nome_banco" name="nome_banco" value="{{ conta.nome_banco }}" required>
+        {# ADICIONADO: readonly para tornar o campo somente leitura #}
+        <input type="text" id="nome_banco" name="nome_banco" value="{{ conta.nome_banco }}" required readonly>
     </div>
     <div class="form-group">
         <label for="tipo">Tipo de Conta:</label>
-        <select id="tipo" name="tipo" required>
+        {# ADICIONADO: disabled para tornar o campo não editável e não enviá-lo no POST #}
+        <select id="tipo" name="tipo" required disabled>
             {% for tipo in tipos_conta %}
             <option value="{{ tipo }}" {% if conta.tipo==tipo %}selected{% endif %}>{{ tipo }}</option>
             {% endfor %}
         </select>
+        {# ADICIONADO: Input hidden para enviar o valor do tipo, já que o select está disabled #}
+        <input type="hidden" name="tipo" value="{{ conta.tipo }}">
     </div>
     <div class="form-group">
         <label for="agencia">Agência (opcional):</label>
-        <input type="text" id="agencia" name="agencia" value="{{ conta.agencia if conta.agencia else '' }}">
+        {# ADICIONADO: readonly para tornar o campo somente leitura #}
+        <input type="text" id="agencia" name="agencia" value="{{ conta.agencia if conta.agencia else '' }}" readonly>
     </div>
     <div class="form-group">
         <label for="conta">Número da Conta:</label>
-        <input type="text" id="conta" name="conta" value="{{ conta.conta }}" required>
+        {# ADICIONADO: readonly para tornar o campo somente leitura #}
+        <input type="text" id="conta" name="conta" value="{{ conta.conta }}" required readonly>
     </div>
     <div class="form-group">
         <label for="saldo_inicial">Saldo Inicial:</label>
+        {# ADICIONADO: readonly para tornar o campo somente leitura #}
         <input type="text" id="saldo_inicial" name="saldo_inicial"
-            value="{{ '%.2f'|format(conta.saldo_inicial|float) }}" placeholder="Ex: 1000.50">
+            value="{{ '%.2f'|format(conta.saldo_inicial|float) }}" placeholder="Ex: 1000.50" readonly>
     </div>
     <div class="form-group">
         <label for="limite">Limite (para contas com limite):</label>
+        {# Este campo continua editável #}
         <input type="text" id="limite" name="limite" value="{{ '%.2f'|format(conta.limite|float) }}"
             placeholder="Ex: 500.00">
     </div>
     <div class="form-group">
         <label for="descricao">Descrição (opcional):</label>
+        {# Este campo continua editável #}
         <input type="text" id="descricao" name="descricao" value="{{ conta.descricao if conta.descricao else '' }}">
     </div>
     <button type="submit" class="btn-primary">Salvar Alterações</button>
