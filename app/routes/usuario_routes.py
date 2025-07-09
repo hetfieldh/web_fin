@@ -3,14 +3,14 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.models.usuario_model import Usuario, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
-import re # Importa o módulo de expressões regulares
+import re
+from sqlalchemy.exc import IntegrityError # Importa IntegrityError
 
 usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usuarios')
 
 @usuario_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # Se já autenticado, redireciona para a página inicial padrão do usuário
         return redirect(url_for(current_user.default_homepage))
 
     if request.method == 'POST':
@@ -25,10 +25,7 @@ def login():
                 flash('Login bem-sucedido!', 'success')
                 next_page = request.args.get('next')
                 
-                # NOVO: Lógica de redirecionamento mais explícita
-                # Se houver um 'next_page' e ele não for a raiz ('/'), redirecione para ele.
-                # Caso contrário, use a default_homepage do usuário.
-                if next_page and next_page != '/': # ALTERADO: Comparando com a string '/' diretamente
+                if next_page and next_page != '/':
                     return redirect(next_page)
                 else:
                     return redirect(url_for(user.default_homepage))
@@ -45,13 +42,11 @@ def logout():
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('usuario_bp.login'))
 
-# Rota para Listar Usuários (agora é a raiz do Blueprint de usuário: /usuarios/)
-@usuario_bp.route('/') # ALTERADO: Rota agora é a raiz do Blueprint de usuário
+@usuario_bp.route('/')
 @login_required
 def list_users():
     if not current_user.is_admin:
         flash('Você não tem permissão para acessar esta página.', 'danger')
-        # Redireciona para a página inicial padrão do usuário
         return redirect(url_for(current_user.default_homepage))
 
     users = Usuario.query.all()
@@ -62,7 +57,6 @@ def list_users():
 def add_user():
     if not current_user.is_admin:
         flash('Você não tem permissão para adicionar usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
         return redirect(url_for(current_user.default_homepage))
 
     if request.method == 'POST':
@@ -77,8 +71,6 @@ def add_user():
             flash('Por favor, preencha todos os campos obrigatórios.', 'danger')
             return render_template('add.html')
 
-        # Validação de formato de e-mail
-        # Regex para validar o formato básico de e-mail
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, email):
             flash('Por favor, insira um endereço de e-mail válido.', 'danger')
@@ -113,7 +105,6 @@ def add_user():
 def edit_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para editar usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
         return redirect(url_for(current_user.default_homepage))
 
     user = Usuario.query.get_or_404(user_id)
@@ -125,11 +116,10 @@ def edit_user(user_id):
         user.is_active = request.form.get('is_active') == 'on'
         user.is_admin = request.form.get('is_admin') == 'on'
 
-        # Validação de formato de e-mail para edição também
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(email_regex, user.email): # Valida o email que foi atribuído
+        if not re.match(email_regex, user.email):
             flash('Por favor, insira um endereço de e-mail válido.', 'danger')
-            return render_template('edit.html', user=user) # Retorna o template com os dados atuais
+            return render_template('edit.html', user=user)
 
         nova_senha = request.form.get('senha')
         if nova_senha:
@@ -151,7 +141,6 @@ def edit_user(user_id):
 def delete_user(user_id):
     if not current_user.is_admin:
         flash('Você não tem permissão para excluir usuários.', 'danger')
-        # Redireciona para o NOVO dashboard_bp.dashboard
         return redirect(url_for(current_user.default_homepage))
 
     user = Usuario.query.get_or_404(user_id)
@@ -159,7 +148,16 @@ def delete_user(user_id):
         flash('Você não pode excluir sua própria conta enquanto estiver logado.', 'danger')
         return redirect(url_for('usuario_bp.list_users'))
 
-    db.session.delete(user)
-    db.session.commit()
-    flash('Usuário excluído com sucesso!', 'success')
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash('Usuário excluído com sucesso!', 'success')
+    except IntegrityError: # Captura o erro de integridade
+        db.session.rollback() # Reverte a transação
+        flash('Não foi possível excluir o usuário. Existem contas ou tipos de transação associados a ele. Por favor, exclua-os primeiro.', 'danger')
+    except Exception as e: # Captura outros erros inesperados
+        db.session.rollback()
+        flash(f'Erro inesperado ao excluir usuário: {e}', 'danger')
+    
     return redirect(url_for('usuario_bp.list_users'))
+
