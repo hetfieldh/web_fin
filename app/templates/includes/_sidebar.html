@@ -30,6 +30,13 @@
             </li>
 
             <li>
+                <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}"
+                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-credit-card"></i> Despesas e Receitas
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ url_for('renda_bp.list_rendas') }}"
                     class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
                     <i class="fas fa-credit-card"></i> Rendas

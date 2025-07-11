@@ -1,0 +1,69 @@
+{# app/templates/despesas_receitas/list.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Despesa/Receita{% endblock %}
+
+{% block topbar_content %}
+<h1>Despesas e Receitas</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="button-group-top">
+    <a href="{{ url_for('despesa_receita_bp.add_despesa_receita') }}" class="btn-primary">
+        <i class="fas fa-plus-circle"></i> Nova Despesa/Receita
+    </a>
+</div>
+
+{% if items %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Data Criação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.despesa_receita }}</td>
+            <td>{{ item.tipo }}</td>
+            <td>{{ item.descricao if item.descricao else '-' }}</td>
+            <td>{{ item.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('despesa_receita_bp.edit_despesa_receita', item_id=item.id) }}"><i
+                        class="fas fa-edit"></i> Editar</a>
+                <form action="{{ url_for('despesa_receita_bp.delete_despesa_receita', item_id=item.id) }}" method="POST"
+                    style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir este item? Esta ação é irreversível!');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Você ainda não tem nenhuma despesa ou receita cadastrada.</p>
+{% endif %}
+{% endblock %}

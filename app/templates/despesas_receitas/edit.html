@@ -1,0 +1,48 @@
+{# app/templates/despesas_receitas/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Despesa/Receita{% endblock %}
+
+{% block topbar_content %}
+    <h1>Editar Despesa/Receita: {{ item.despesa_receita }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+                        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+                        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{{ url_for('despesa_receita_bp.edit_despesa_receita', item_id=item.id) }}">
+        <div class="form-group">
+            <label for="despesa_receita">Nome:</label>
+            <input type="text" id="despesa_receita" name="despesa_receita" value="{{ item.despesa_receita }}" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo" required disabled>
+                {% for tipo in tipos_item %}
+                    <option value="{{ tipo }}" {% if item.tipo == tipo %}selected{% endif %}>{{ tipo }}</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="tipo" value="{{ item.tipo }}">
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição (opcional):</label>
+            <input type="text" id="descricao" name="descricao" value="{{ item.descricao if item.descricao else '' }}">
+        </div>
+        <button type="submit" class="btn-primary">Salvar Alterações</button>
+        <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}" class="btn-secondary"
+            style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}

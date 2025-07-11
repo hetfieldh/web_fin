@@ -35,7 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('nome_banco'),
         document.getElementById('transacao'),
         document.getElementById('crediario'),
-        document.getElementById('grupo')
+        document.getElementById('grupo'),
+        document.getElementById('descricao'),
+        document.getElementById('despesa_receita')
     ];
     nomeInputs.forEach(input => {
         if (input && !input.readOnly) {

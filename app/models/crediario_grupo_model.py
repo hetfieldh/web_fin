@@ -11,7 +11,7 @@ class CrediarioGrupo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-    grupo = db.Column(db.String(100), nullable=False) # Nome do grupo de crediário
+    grupo = db.Column(db.String(100), nullable=False)
     tipo = db.Column(tipo_grupo_crediario_enum, nullable=False)
     data_criacao = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     descricao = db.Column(db.String(255), nullable=True)

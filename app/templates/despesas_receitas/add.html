@@ -1,0 +1,50 @@
+{# app/templates/despesas_receitas/add.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Despesa/Receita{% endblock %}
+
+{% block topbar_content %}
+<h1>Adicionar Despesa/Receita</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('despesa_receita_bp.add_despesa_receita') }}">
+    <div class="form-group">
+        <label for="despesa_receita">Nome (Ex: Salário, Aluguel, Supermercado):</label>
+        <input type="text" id="despesa_receita" name="despesa_receita" required
+            value="{{ request.form.despesa_receita if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione um tipo</option>
+            {% for tipo in tipos_item %}
+            <option value="{{ tipo }}" {% if request.form and request.form.tipo==tipo %}selected{% endif %}>{{ tipo }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Adicionar</button>
+    <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}
