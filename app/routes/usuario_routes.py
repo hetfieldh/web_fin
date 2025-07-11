@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 import re
 from sqlalchemy.exc import IntegrityError
+from app.routes.audit_log_routes import log_audit_event
 
 usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usuarios')
 
@@ -19,10 +20,14 @@ def login():
 
         user = Usuario.query.filter((Usuario.login == login_id) | (Usuario.email == login_id)).first()
 
+        ip_address = request.remote_addr
+        user_agent = request.headers.get('User-Agent')
+
         if user and check_password_hash(user.senha_hash, senha):
             if user.is_active:
                 login_user(user, remember=True)
                 flash('Login bem-sucedido!', 'success')
+                log_audit_event(user.id, user.login, 'LOGIN_SUCCESS', ip_address, user_agent)
                 next_page = request.args.get('next')
                 
                 if next_page and next_page != '/':
@@ -31,15 +36,23 @@ def login():
                     return redirect(url_for(user.default_homepage))
             else:
                 flash('Sua conta está inativa. Por favor, entre em contato com o administrador.', 'danger')
+                log_audit_event(user.id, user.login, 'LOGIN_INACTIVE_ACCOUNT', ip_address, user_agent)
         else:
             flash('Login ou senha inválidos.', 'danger')
+            log_audit_event(None, login_id, 'LOGIN_FAILURE', ip_address, user_agent)
     return render_template('login.html')
 
 @usuario_bp.route('/logout')
 @login_required
 def logout():
+    user_id = current_user.id
+    username = current_user.login
+    ip_address = request.remote_addr
+    user_agent = request.headers.get('User-Agent')
+
     logout_user()
     flash('Você foi desconectado.', 'info')
+    log_audit_event(user_id, username, 'LOGOUT', ip_address, user_agent)
     return redirect(url_for('usuario_bp.login'))
 
 @usuario_bp.route('/')
@@ -71,6 +84,7 @@ def add_user():
         if not (nome and email and login and senha and confirm_senha):
             flash('Por favor, preencha todos os campos obrigatórios.', 'danger')
             return render_template('add.html')
+
         nome_stripped = nome.strip()
         if not nome_stripped:
             flash('O nome não pode ser vazio.', 'danger')
@@ -115,6 +129,7 @@ def add_user():
             flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')
             return render_template('add.html')
 
+
         login_stripped = login.strip()
         if not login_stripped:
             flash('O login não pode ser vazio.', 'danger')
@@ -128,6 +143,7 @@ def add_user():
             return render_template('add.html')
         
         login = login_stripped 
+
 
         if Usuario.query.filter_by(email=email).first():
             flash('Este email já está cadastrado.', 'danger')
@@ -191,6 +207,7 @@ def edit_user(user_id):
             return render_template('edit.html', user=user)
         user.nome = nome_stripped
 
+
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, user.email):
             flash('Por favor, insira um endereço de e-mail válido.', 'danger')
@@ -213,6 +230,7 @@ def edit_user(user_id):
             flash('O login deve começar com uma letra minúscula e conter apenas letras, números, sublinhados, hífens ou pontos.', 'danger')
             return render_template('edit.html', user=user)
         user.login = login_stripped
+
 
         if nova_senha:
             if nova_senha != confirm_nova_senha:
@@ -245,6 +263,7 @@ def edit_user(user_id):
 
     return render_template('edit.html', user=user)
 
+
 @usuario_bp.route('/delete/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
@@ -263,7 +282,7 @@ def delete_user(user_id):
         flash('Usuário excluído com sucesso!', 'success')
     except IntegrityError as e:
         db.session.rollback()
-        flash('Não foi possível excluir o usuário. Existem contas ou tipos de transação associados a ele. Por favor, exclua-os primeiro.', 'danger')
+        flash('Não foi possível excluir o registro. Existem itens relacionados a ele.', 'danger')
     except Exception as e:
         db.session.rollback()
         flash(f'Erro inesperado ao excluir usuário: {e}', 'danger')

@@ -181,6 +181,10 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.data-table.audit-log-table td {
+    font-size: 0.7em;
+}
+
 /* Estilo para Botões e Links de Ação em Tabelas */
 .action-buttons a {
     margin-right: 10px;

@@ -116,9 +116,11 @@ def delete_despesa_receita(item_id):
         db.session.delete(item)
         db.session.commit()
         flash('Despesa/Receita excluída com sucesso!', 'success')
+    except IntegrityError as e:
+        db.session.rollback()
+        flash('Não foi possível excluir a despesa ou receita. Existem contas ou tipos de transação associados a ele. Por favor, exclua-os primeiro.', 'danger')
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao excluir despesa/receita: {e}', 'danger')
     
     return redirect(url_for('despesa_receita_bp.list_despesas_receitas'))
-

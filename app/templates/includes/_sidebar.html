@@ -17,28 +17,28 @@
 
             <li>
                 <a href="{{ url_for('conta_bp.list_contas') }}"
-                    class="{% if 'conta_bp' in request.endpoint %}active{% endif %}">
+                    class="{% if request.endpoint.startswith('conta_bp') %}active{% endif %}">
                     <i class="fas fa-wallet"></i> Contas Bancárias
                 </a>
             </li>
 
             <li>
                 <a href="{{ url_for('crediario_bp.list_crediarios') }}"
-                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    class="{% if request.endpoint.startswith('crediario_bp') %}active{% endif %}">
                     <i class="fas fa-credit-card"></i> Crediários
                 </a>
             </li>
 
             <li>
                 <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}"
-                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    class="{% if request.endpoint.startswith('despesa_receita_bp') %}active{% endif %}">
                     <i class="fas fa-credit-card"></i> Despesas e Receitas
                 </a>
             </li>
 
             <li>
                 <a href="{{ url_for('renda_bp.list_rendas') }}"
-                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    class="{% if request.endpoint.startswith('renda_bp') %}active{% endif %}">
                     <i class="fas fa-credit-card"></i> Rendas
                 </a>
             </li>
@@ -54,6 +54,12 @@
                 <a href="{{ url_for('usuario_bp.list_users') }}"
                     class="{% if 'usuario_bp' in request.endpoint and request.endpoint != 'usuario_bp.login' and request.endpoint != 'usuario_bp.logout' %}active{% endif %}">
                     <i class="fas fa-users"></i> Usuários
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('audit_log_bp.list_audit_logs') }}"
+                    class="{% if request.endpoint.startswith('audit_log_bp') %}active{% endif %}">
+                    <i class="fas fa-clipboard-list"></i> Log de Auditoria
                 </a>
             </li>
             {% endif %}
