@@ -1,0 +1,55 @@
+{# app/templates/despesas_fixas/add.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Despesa/Receita{% endblock %}
+
+{% block topbar_content %}
+<h1>Adicionar Despesa Fixa</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('despesa_fixa_bp.add_despesa_fixa') }}">
+    <div class="form-group">
+        <label for="despesa_receita_id">Item de Despesa:</label>
+        <select id="despesa_receita_id" name="despesa_receita_id" required>
+            <option value="">Selecione um item de despesa</option>
+            {% for item in despesas_receitas_disponiveis %}
+            <option value="{{ item.id }}" {% if request.form and request.form.despesa_receita_id|int==item.id
+                %}selected{% endif %}>{{ item.despesa_receita }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="mes_ano">Mês/Ano (YYYY-MM):</label>
+        <input type="month" id="mes_ano" name="mes_ano" required
+            value="{{ request.form.mes_ano if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor" required value="{{ request.form.valor if request.form else '0.00' }}"
+            placeholder="Ex: 150.75">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Adicionar Conta Fixa</button>
+    <a href="{{ url_for('despesa_fixa_bp.list_despesas_fixas') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,55 @@
+{# app/templates/despesas_fixas/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Despesa/Receita{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar Despesa Fixa: {{ despesa_fixa.despesa_receita_item.despesa_receita }} ({{
+    despesa_fixa.mes_ano.strftime('%m/%Y') }})</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('despesa_fixa_bp.edit_despesa_fixa', despesa_fixa_id=despesa_fixa.id) }}">
+    <div class="form-group">
+        <label for="despesa_receita_id">Item de Despesa:</label>
+        <select id="despesa_receita_id" name="despesa_receita_id" required disabled>
+            <option value="{{ despesa_fixa.despesa_receita_id }}" selected>{{
+                despesa_fixa.despesa_receita_item.despesa_receita }}</option>
+        </select>
+        <input type="hidden" name="despesa_receita_id" value="{{ despesa_fixa.despesa_receita_id }}">
+    </div>
+    <div class="form-group">
+        <label for="mes_ano">Mês/Ano (YYYY-MM):</label>
+        <input type="month" id="mes_ano" name="mes_ano" required value="{{ despesa_fixa.mes_ano.strftime('%Y-%m') }}"
+            readonly>
+    </div>
+    <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor" value="{{ '%.2f'|format(despesa_fixa.valor|float) }}"
+            placeholder="Ex: 150.75">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao"
+            value="{{ despesa_fixa.descricao if despesa_fixa.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('despesa_fixa_bp.list_despesas_fixas') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

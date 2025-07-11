@@ -23,11 +23,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="button-group-top">
-    <a href="{{ url_for('despesa_receita_bp.add_despesa_receita') }}" class="btn-primary">
-        <i class="fas fa-plus-circle"></i> Nova Despesa/Receita
-    </a>
-</div>
+<a href="{{ url_for('despesa_receita_bp.add_despesa_receita') }}" class="btn-primary"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-plus-circle"></i> Nova Despesa/Receita</a>
+
+<a href="{{ url_for('despesa_fixa_bp.list_despesas_fixas') }}" class="btn-submenu"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-bars"></i> Despesas Fixas</a>
 
 {% if items %}
 <table class="data-table">
