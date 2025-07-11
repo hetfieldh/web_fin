@@ -1,3 +1,4 @@
+# app/models/usuario_model.py
 from app import db, login_manager
 from flask_login import UserMixin
 
@@ -12,7 +13,7 @@ class Usuario(db.Model, UserMixin):
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
     data_criacao = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    default_homepage = db.Column(db.String(50), default='dashboard_bp.dashboard') 
+    default_homepage = db.Column(db.String(50), default='dashboard_bp.dashboard')
 
     def __repr__(self):
         return f"<Usuario {self.login}>"
@@ -23,4 +24,3 @@ class Usuario(db.Model, UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
-

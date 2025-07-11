@@ -1,4 +1,5 @@
 # run.py
+
 from app import create_app, db
 import app.models.usuario_model
 

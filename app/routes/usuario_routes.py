@@ -4,7 +4,7 @@ from app.models.usuario_model import Usuario, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 import re
-from sqlalchemy.exc import IntegrityError # Certifique-se de que está importado
+from sqlalchemy.exc import IntegrityError
 
 usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usuarios')
 
@@ -71,8 +71,6 @@ def add_user():
         if not (nome and email and login and senha and confirm_senha):
             flash('Por favor, preencha todos os campos obrigatórios.', 'danger')
             return render_template('add.html')
-
-        # Validação do campo Nome
         nome_stripped = nome.strip()
         if not nome_stripped:
             flash('O nome não pode ser vazio.', 'danger')
@@ -93,14 +91,12 @@ def add_user():
             flash('O nome não pode conter números ou caracteres especiais.', 'danger')
             return render_template('add.html')
 
-        # Validação de formato de e-mail e conversão para minúsculas
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, email):
             flash('Por favor, insira um endereço de e-mail válido.', 'danger')
             return render_template('add.html')
         email = email.lower()
 
-        # Validação de força da senha e confirmação
         if senha != confirm_senha:
             flash('A senha e a confirmação de senha não coincidem.', 'danger')
             return render_template('add.html')
@@ -114,14 +110,11 @@ def add_user():
             flash('A senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).', 'danger')
             return render_template('add.html')
         
-        # Lista negra de senhas comuns (exemplo básico)
         common_passwords = ['12345678', 'password', 'qwerty', 'admin', 'usuario', 'senha123']
         if senha.lower() in common_passwords:
             flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')
             return render_template('add.html')
 
-
-        # Validação do campo Login
         login_stripped = login.strip()
         if not login_stripped:
             flash('O login não pode ser vazio.', 'danger')
@@ -135,7 +128,6 @@ def add_user():
             return render_template('add.html')
         
         login = login_stripped 
-
 
         if Usuario.query.filter_by(email=email).first():
             flash('Este email já está cadastrado.', 'danger')
@@ -179,7 +171,6 @@ def edit_user(user_id):
         user.is_active = request.form.get('is_active') == 'on'
         user.is_admin = request.form.get('is_admin') == 'on'
 
-        # Validação do campo Nome para edição
         nome_stripped = user.nome.strip()
         if not nome_stripped:
             flash('O nome não pode ser vazio.', 'danger')
@@ -200,15 +191,12 @@ def edit_user(user_id):
             return render_template('edit.html', user=user)
         user.nome = nome_stripped
 
-
-        # Validação de formato de e-mail e conversão para minúsculas para edição
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, user.email):
             flash('Por favor, insira um endereço de e-mail válido.', 'danger')
             return render_template('edit.html', user=user)
         user.email = user.email.lower()
 
-        # Validação do campo Login para edição
         login_stripped = user.login.strip()
         if not login_stripped:
             flash('O login não pode ser vazio.', 'danger')
@@ -225,7 +213,6 @@ def edit_user(user_id):
             flash('O login deve começar com uma letra minúscula e conter apenas letras, números, sublinhados, hífens ou pontos.', 'danger')
             return render_template('edit.html', user=user)
         user.login = login_stripped
-
 
         if nova_senha:
             if nova_senha != confirm_nova_senha:
@@ -258,7 +245,6 @@ def edit_user(user_id):
 
     return render_template('edit.html', user=user)
 
-
 @usuario_bp.route('/delete/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
@@ -275,15 +261,11 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
         flash('Usuário excluído com sucesso!', 'success')
-    except IntegrityError as e: # Captura a IntegrityError e usa 'e' para inspecioná-la
+    except IntegrityError as e:
         db.session.rollback()
-        # Verifica se o erro é especificamente de violação de chave estrangeira
-        # A mensagem de erro do psycopg2 (e.orig) pode ser verificada para ser mais específico
-        # No entanto, para uma mensagem genérica, basta o IntegrityError
         flash('Não foi possível excluir o usuário. Existem contas ou tipos de transação associados a ele. Por favor, exclua-os primeiro.', 'danger')
     except Exception as e:
         db.session.rollback()
-        # Esta mensagem será exibida para qualquer outro erro que não seja IntegrityError
         flash(f'Erro inesperado ao excluir usuário: {e}', 'danger')
     
     return redirect(url_for('usuario_bp.list_users'))

@@ -1,3 +1,5 @@
+{# app\templates\includes\_sidebar.html #}
+
 <div class="sidebar">
     <div class="logo">
         <a href="{{ url_for('dashboard_bp.dashboard') }}">
@@ -14,8 +16,7 @@
             </li>
 
             <li>
-                <a href="#" {# Mude para {{ url_for('transacao_bp.list_transactions') }} quando criar #}
-                    class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
+                <a href="#" class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
                     <i class="fas fa-exchange-alt"></i> Transações
                 </a>
             </li>

@@ -1,3 +1,5 @@
+{# app\templates\contas\list.html #}
+
 {% extends 'base.html' %}
 
 {% block title %}WebFin - Contas Bancárias{% endblock %}
@@ -50,8 +52,8 @@
             <td>{{ conta.tipo }}</td>
             <td>{{ conta.agencia if conta.agencia else '-' }}</td>
             <td>{{ conta.conta }}</td>
-            <td>R$ {{ "%.2f"|format(conta.saldo_inicial|float) }}</td> {# Formata como moeda #}
-            <td>R$ {{ "%.2f"|format(conta.limite|float) }}</td> {# Formata como moeda #}
+            <td>R$ {{ "%.2f"|format(conta.saldo_inicial|float) }}</td>
+            <td>R$ {{ "%.2f"|format(conta.limite|float) }}</td>
             <td>{{ conta.descricao if conta.descricao else '-' }}</td>
             <td class="action-buttons">
                 <a href="{{ url_for('conta_bp.edit_conta', conta_id=conta.id) }}"><i class="fas fa-edit"></i> Editar</a>

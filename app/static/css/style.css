@@ -1,3 +1,5 @@
+/* app/static/css/style.css */
+
 /* Variáveis CSS para cores */
 :root {
     --bg-primary: #F8F9FA;
@@ -16,7 +18,6 @@ html,
 body {
     height: 100%;
     overflow: hidden;
-    /* Impede a rolagem da janela principal */
 }
 
 body {
@@ -27,7 +28,6 @@ body {
     color: var(--text-primary);
     display: flex;
     height: 100%;
-    /* Garante que o body ocupe a altura total do html */
 }
 
 /* Sidebar */
@@ -54,7 +54,6 @@ body {
 .sidebar nav {
     flex-grow: 1;
     overflow-y: auto;
-    /* Permite rolagem interna para itens de menu se excederem a altura */
 }
 
 .sidebar nav ul {
@@ -139,16 +138,12 @@ body {
     overflow-y: auto;
 }
 
-/* NOVO: Grupo de botões para organizar botões lado a lado */
+/* Grupo de botões para organizar botões lado a lado */
 .button-group-top {
     display: flex;
-    /* Usa flexbox para alinhar os itens */
     gap: 10px;
-    /* Espaço entre os botões */
     margin-bottom: 20px;
-    /* Margem abaixo do grupo de botões */
     flex-wrap: wrap;
-    /* Permite que os botões quebrem a linha se não houver espaço suficiente */
 }
 
 /* Estilo para Tabelas */

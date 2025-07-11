@@ -1,3 +1,5 @@
+{# app\templates\dashboard.html #}
+
 {% extends 'base.html' %}
 
 {% block title %}WebFin - Home{% endblock %}
@@ -7,22 +9,22 @@
 {% endblock %}
 
 {% block content %}
-    <p>Esta é a sua página principal de finanças pessoais.</p>
-    <p>Aqui você verá resumos, gráficos e outras informações importantes.</p>
+<p>Esta é a sua página principal de finanças pessoais.</p>
+<p>Aqui você verá resumos, gráficos e outras informações importantes.</p>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
-                        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
-                        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
 {% endblock %}

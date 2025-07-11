@@ -5,12 +5,10 @@ from app import db, login_manager
 from app.models.usuario_model import Usuario
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
-import re # Importa o módulo de expressões regulares
+import re
 
-# Criação do Blueprint para as rotas de configurações
 configuracoes_bp = Blueprint('configuracoes_bp', __name__, template_folder='../templates/configuracoes')
 
-# --- Rota para a Página de Configurações de Perfil ---
 @configuracoes_bp.route('/settings', methods=['GET'])
 @login_required
 def settings():
@@ -26,7 +24,6 @@ def settings():
 
     return render_template('configuracoes/settings.html', user=current_user, homepage_options=homepage_options)
 
-# --- Rota para Atualizar Nome e Email do Perfil ---
 @configuracoes_bp.route('/settings/update_profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -41,7 +38,6 @@ def update_profile():
         flash('Nome e Email são obrigatórios.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
-    # NOVO: Validação do campo Nome
     nome_stripped = new_nome.strip()
     if not nome_stripped:
         flash('O nome não pode ser vazio.', 'danger')
@@ -62,14 +58,12 @@ def update_profile():
         return redirect(url_for('configuracoes_bp.settings'))
 
 
-    # Validação de formato de e-mail e conversão para minúsculas
     email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(email_regex, new_email):
         flash('Por favor, insira um endereço de e-mail válido.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
-    new_email = new_email.lower() # Converte o e-mail para minúsculas
+    new_email = new_email.lower()
 
-    # Verifica se o email já existe para outro usuário (usando o email já em minúsculas)
     existing_user_with_email = Usuario.query.filter(
         Usuario.email == new_email,
         Usuario.id != current_user.id
@@ -80,8 +74,8 @@ def update_profile():
         return redirect(url_for('configuracoes_bp.settings'))
 
     try:
-        current_user.nome = nome_stripped # Usa o nome limpo e validado
-        current_user.email = new_email # Usa o email em minúsculas e validado
+        current_user.nome = nome_stripped
+        current_user.email = new_email
         db.session.commit()
         flash('Perfil atualizado com sucesso!', 'success')
         login_user(current_user, remember=True)
@@ -91,7 +85,6 @@ def update_profile():
 
     return redirect(url_for('configuracoes_bp.settings'))
 
-# --- Rota para Alterar Senha ---
 @configuracoes_bp.route('/settings/change_password', methods=['POST'])
 @login_required
 def change_password():
@@ -115,7 +108,6 @@ def change_password():
         flash('A nova senha e a confirmação de senha não coincidem.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
-    # Validação de força da nova senha
     if len(new_password) < 8:
         flash('A nova senha deve ter no mínimo 8 caracteres.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
@@ -126,7 +118,6 @@ def change_password():
         flash('A nova senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
     
-    # Lista negra de senhas comuns (exemplo básico)
     common_passwords = ['12345678', 'password', 'qwerty', 'admin', 'usuario', 'senha123']
     if new_password.lower() in common_passwords:
         flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')
@@ -143,7 +134,6 @@ def change_password():
 
     return redirect(url_for('configuracoes_bp.settings'))
 
-# --- Rota para Atualizar Página Inicial Padrão ---
 @configuracoes_bp.route('/settings/update_homepage', methods=['POST'])
 @login_required
 def update_homepage():
