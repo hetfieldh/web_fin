@@ -1,0 +1,48 @@
+{# app/templates/crediario_grupos/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Editar Grupo de Crediário{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar Grupo de Crediário: {{ grupo.grupo }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('crediario_grupo_bp.edit_crediario_grupo', grupo_id=grupo.id) }}">
+    <div class="form-group">
+        <label for="grupo">Nome do Grupo:</label>
+        <input type="text" id="grupo" name="grupo" value="{{ grupo.grupo }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required disabled>
+            {% for tipo in tipos_grupo %}
+            <option value="{{ tipo }}" {% if grupo.tipo==tipo %}selected{% endif %}>{{ tipo }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="tipo" value="{{ grupo.tipo }}">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ grupo.descricao if grupo.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('crediario_grupo_bp.list_crediario_grupos') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

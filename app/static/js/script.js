@@ -1,5 +1,4 @@
-/* app/static/js/script.js */
-
+// app/static/js/script.js
 document.addEventListener('DOMContentLoaded', function () {
 
     function standardizeNameClient(value) {
@@ -35,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('nome'),
         document.getElementById('nome_banco'),
         document.getElementById('transacao'),
-        document.getElementById('crediario')
+        document.getElementById('crediario'),
+        document.getElementById('grupo')
     ];
     nomeInputs.forEach(input => {
         if (input && !input.readOnly) {

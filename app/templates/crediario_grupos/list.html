@@ -1,11 +1,10 @@
-{# app\templates\crediarios\list.html #}
-
+{# app/templates/crediario_grupos/list.html #}
 {% extends 'base.html' %}
 
-{% block title %}WebFin - Crediários{% endblock %}
+{% block title %}WebFin - Grupos de Crediário{% endblock %}
 
 {% block topbar_content %}
-<h1>Crediários</h1>
+<h1>Grupos de Crediário</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -24,39 +23,35 @@
 {% endblock %}
 
 {% block content %}
-<a href="{{ url_for('crediario_bp.add_crediario') }}" class="btn-primary"
+<a href="{{ url_for('crediario_grupo_bp.add_crediario_grupo') }}" class="btn-primary"
     style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-plus-circle"></i> Adicionar</a>
 
-<a href="{{ url_for('crediario_grupo_bp.list_crediario_grupos') }}" class="btn-submenu"
-    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-bars"></i> Grupos de Crediário</a>
+<a href="{{ url_for('crediario_bp.list_crediarios') }}" class="btn-secondary"
+    style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-arrow-left"></i> Voltar</a>
 
-{% if crediarios %}
+{% if grupos %}
 <table class="data-table">
     <thead>
         <tr>
-            <th>Nome do Crediário</th>
+            <th>Nome do Grupo</th>
             <th>Tipo</th>
-            <th>Final</th>
-            <th>Limite</th>
             <th>Descrição</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        {% for crediario in crediarios %}
+        {% for grupo in grupos %}
         <tr>
-            <td>{{ crediario.crediario }}</td>
-            <td>{{ crediario.tipo }}</td>
-            <td>{{ crediario.final if crediario.final else '-' }}</td>
-            <td>R$ {{ "%.2f"|format(crediario.limite|float) }}</td>
-            <td>{{ crediario.descricao if crediario.descricao else '-' }}</td>
+            <td>{{ grupo.grupo }}</td>
+            <td>{{ grupo.tipo }}</td>
+            <td>{{ grupo.descricao if grupo.descricao else '-' }}</td>
             <td class="action-buttons">
-                <a href="{{ url_for('crediario_bp.edit_crediario', crediario_id=crediario.id) }}"><i
+                <a href="{{ url_for('crediario_grupo_bp.edit_crediario_grupo', grupo_id=grupo.id) }}"><i
                         class="fas fa-edit"></i> Editar</a>
-                <form action="{{ url_for('crediario_bp.delete_crediario', crediario_id=crediario.id) }}" method="POST"
-                    style="display:inline;">
+                <form action="{{ url_for('crediario_grupo_bp.delete_crediario_grupo', grupo_id=grupo.id) }}"
+                    method="POST" style="display:inline;">
                     <button type="submit"
-                        onclick="return confirm('Tem certeza que deseja excluir este crediário? Esta ação é irreversível!');"
+                        onclick="return confirm('Tem certeza que deseja excluir este grupo de crediário? Esta ação é irreversível!');"
                         style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;">
                         <i class="fas fa-trash-alt"></i> Excluir
                     </button>
@@ -67,6 +62,6 @@
     </tbody>
 </table>
 {% else %}
-<p>Você ainda não tem nenhum crediário cadastrado.</p>
+<p>Você ainda não tem nenhum grupo de crediário cadastrado.</p>
 {% endif %}
 {% endblock %}

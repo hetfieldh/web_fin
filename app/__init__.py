@@ -27,6 +27,7 @@ def create_app():
     from app.routes.configuracoes_routes import configuracoes_bp
     from app.routes.dashboard_routes import dashboard_bp 
     from app.routes.crediario_routes import crediario_bp
+    from app.routes.crediario_grupo_routes import crediario_grupo_bp
 
     # REGISTRAR BLUEPRINTS
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
@@ -35,12 +36,13 @@ def create_app():
     app.register_blueprint(configuracoes_bp, url_prefix='/configuracoes')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard') 
     app.register_blueprint(crediario_bp, url_prefix='/crediarios')
+    app.register_blueprint(crediario_grupo_bp, url_prefix='/crediario_grupos')
 
     # Rota raiz para redirecionar para o login ou para a página inicial padrão
     @app.route('/')
     def index():
         if current_user.is_authenticated:
-            return redirect(url_for(current_user.default_homepage)) # ALTERADO
+            return redirect(url_for(current_user.default_homepage)) 
         return redirect(url_for('usuario_bp.login'))
 
     return app
@@ -53,6 +55,7 @@ def init_db():
         import app.models.conta_model
         import app.models.conta_transacao_model
         import app.models.crediario_model
+        import app.models.crediario_grupo_model
         db.create_all()
         print("Tabelas do banco de dados criadas/verificadas.")
 

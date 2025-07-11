@@ -39,8 +39,9 @@
         <input type="hidden" name="tipo" value="{{ crediario.tipo }}">
     </div>
     <div class="form-group">
-        <label for="final">Final (opcional):</label>
-        <input type="text" id="final" name="final" value="{{ crediario.final if crediario.final else '' }}">
+        <label for="final">Final (4 últimos dígitos):</label>
+        <input type="text" id="final" name="final" value="{{ crediario.final if crediario.final else '' }}" required
+            readonly>
     </div>
     <div class="form-group">
         <label for="limite">Limite:</label>
