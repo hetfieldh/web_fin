@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Editar Crediário{% endblock %}
+
+{# Conteúdo da topbar para o título da página e mensagens flash #}
+{% block topbar_content %}
+<h1>Editar Crediário: {{ crediario.crediario }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('crediario_bp.edit_crediario', crediario_id=crediario.id) }}">
+    <div class="form-group">
+        <label for="crediario">Nome do Crediário:</label>
+        {# readonly para tornar o campo somente leitura #}
+        <input type="text" id="crediario" name="crediario" value="{{ crediario.crediario }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo de Crediário:</label>
+        {# disabled para tornar o campo não editável e não enviá-lo no POST #}
+        <select id="tipo" name="tipo" required disabled>
+            {% for tipo in tipos_crediario %}
+            <option value="{{ tipo }}" {% if crediario.tipo==tipo %}selected{% endif %}>{{ tipo }}</option>
+            {% endfor %}
+        </select>
+        {# Input hidden para enviar o valor do tipo, já que o select está disabled #}
+        <input type="hidden" name="tipo" value="{{ crediario.tipo }}">
+    </div>
+    <div class="form-group">
+        <label for="final">Final (opcional):</label>
+        {# REMOVIDO: readonly para tornar o campo editável #}
+        <input type="text" id="final" name="final" value="{{ crediario.final if crediario.final else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="limite">Limite:</label>
+        {# Este campo continua editável #}
+        <input type="text" id="limite" name="limite" value="{{ '%.2f'|format(crediario.limite|float) }}"
+            placeholder="Ex: 500.00">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        {# Este campo continua editável #}
+        <input type="text" id="descricao" name="descricao"
+            value="{{ crediario.descricao if crediario.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('crediario_bp.list_crediarios') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

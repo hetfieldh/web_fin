@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Crediários{% endblock %}
+
+{% block topbar_content %}
+<h1>Crediários</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="button-group-top">
+    <a href="{{ url_for('crediario_bp.add_crediario') }}" class="btn-primary">
+        <i class="fas fa-plus-circle"></i> Adicionar
+    </a>
+</div>
+
+{% if crediarios %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Nome do Crediário</th>
+            <th>Tipo</th>
+            <th>Final</th>
+            <th>Limite</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for crediario in crediarios %}
+        <tr>
+            <td>{{ crediario.crediario }}</td>
+            <td>{{ crediario.tipo }}</td>
+            <td>{{ crediario.final if crediario.final else '-' }}</td>
+            <td>R$ {{ "%.2f"|format(crediario.limite|float) }}</td>
+            <td>{{ crediario.descricao if crediario.descricao else '-' }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('crediario_bp.edit_crediario', crediario_id=crediario.id) }}"><i
+                        class="fas fa-edit"></i> Editar</a>
+                <form action="{{ url_for('crediario_bp.delete_crediario', crediario_id=crediario.id) }}" method="POST"
+                    style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir este crediário? Esta ação é irreversível!');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Você ainda não tem nenhum crediário cadastrado.</p>
+{% endif %}
+{% endblock %}

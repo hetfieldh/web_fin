@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Crediários{% endblock %}
+
+{# Conteúdo da topbar para o título da página e mensagens flash #}
+{% block topbar_content %}
+<h1>Adicionar Novo Crediário</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('crediario_bp.add_crediario') }}">
+    <div class="form-group">
+        <label for="crediario">Nome do Crediário (Ex: Magazine Luiza, Cartão da Loja):</label>
+        <input type="text" id="crediario" name="crediario" required
+            value="{{ request.form.crediario if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo de Crediário:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione um tipo</option>
+            {% for tipo in tipos_crediario %}
+            <option value="{{ tipo }}" {% if request.form and request.form.tipo==tipo %}selected{% endif %}>{{ tipo }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="final">Final (4 últimos dígitos):</label>
+        <input type="text" id="final" name="final" value="{{ request.form.final if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="limite">Limite:</label>
+        <input type="text" id="limite" name="limite" value="{{ request.form.limite if request.form else '0.00' }}"
+            placeholder="Ex: 500.00">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar</button>
+    <a href="{{ url_for('crediario_bp.list_crediarios') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

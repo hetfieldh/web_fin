@@ -1,15 +1,14 @@
 <div class="sidebar">
     <div class="logo">
-        <a href="{{ url_for('dashboard_bp.dashboard') }}"> {# ALTERADO: Link para o novo dashboard_bp #}
+        <a href="{{ url_for('dashboard_bp.dashboard') }}">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="WebFin Logo">
         </a>
     </div>
     <nav>
         <ul>
             <li>
-                <a href="{{ url_for('dashboard_bp.dashboard') }}" {# ALTERADO: Link para o novo dashboard_bp #}
-                    class="{% if request.endpoint == 'dashboard_bp.dashboard' %}active{% endif %}"> {# ALTERADO:
-                    Endpoint para o novo dashboard_bp #}
+                <a href="{{ url_for('dashboard_bp.dashboard') }}"
+                    class="{% if request.endpoint == 'dashboard_bp.dashboard' %}active{% endif %}">
                     <i class="fas fa-home"></i> Dashboard
                 </a>
             </li>
@@ -21,36 +20,29 @@
                 </a>
             </li>
 
-            {# REMOVIDO: Item "Tipos de Transação" #}
-            {#
-            <li>
-                <a href="{{ url_for('conta_transacao_bp.list_tipos_transacao') }}"
-                    class="{% if 'conta_transacao_bp' in request.endpoint %}active{% endif %}">
-                    <i class="fas fa-tags"></i> Tipos de Transação
-                </a>
-            </li>
-            #}
-
             <li>
                 <a href="{{ url_for('conta_bp.list_contas') }}"
                     class="{% if 'conta_bp' in request.endpoint %}active{% endif %}">
-                    <i class="fas fa-wallet"></i> Contas
+                    <i class="fas fa-wallet"></i> Contas Bancárias
                 </a>
             </li>
 
-            {# Bloco para Usuários (apenas para administradores) #}
+            <li>
+                <a href="{{ url_for('crediario_bp.list_crediarios') }}"
+                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-credit-card"></i> Crediários
+                </a>
+            </li>
+
             {% if current_user.is_authenticated and current_user.is_admin %}
             <li>
-                <a href="{{ url_for('usuario_bp.list_users') }}" {# ALTERADO: Link para usuario_bp.list_users (que agora
-                    é /usuarios/) #}
+                <a href="{{ url_for('usuario_bp.list_users') }}"
                     class="{% if 'usuario_bp' in request.endpoint and request.endpoint != 'usuario_bp.login' and request.endpoint != 'usuario_bp.logout' %}active{% endif %}">
-                    {# ALTERADO: Condição de active mais abrangente para o blueprint de usuário #}
                     <i class="fas fa-users"></i> Usuários
                 </a>
             </li>
             {% endif %}
 
-            {# Bloco para Configurações (apenas para NÃO administradores) #}
             {% if current_user.is_authenticated and not current_user.is_admin %}
             <li>
                 <a href="{{ url_for('configuracoes_bp.settings') }}"
