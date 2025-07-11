@@ -62,7 +62,7 @@ def update_profile():
         return redirect(url_for('configuracoes_bp.settings'))
 
 
-    # NOVO: Validação de formato de e-mail e conversão para minúsculas
+    # Validação de formato de e-mail e conversão para minúsculas
     email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(email_regex, new_email):
         flash('Por favor, insira um endereço de e-mail válido.', 'danger')
@@ -115,7 +115,7 @@ def change_password():
         flash('A nova senha e a confirmação de senha não coincidem.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
-    # NOVO: Validação de força da nova senha
+    # Validação de força da nova senha
     if len(new_password) < 8:
         flash('A nova senha deve ter no mínimo 8 caracteres.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
@@ -126,7 +126,7 @@ def change_password():
         flash('A nova senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
     
-    # NOVO: Lista negra de senhas comuns (exemplo básico)
+    # Lista negra de senhas comuns (exemplo básico)
     common_passwords = ['12345678', 'password', 'qwerty', 'admin', 'usuario', 'senha123']
     if new_password.lower() in common_passwords:
         flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')

@@ -1,10 +1,10 @@
 # app/routes/usuario_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from psycopg2 import IntegrityError
 from app.models.usuario_model import Usuario, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 import re
+from sqlalchemy.exc import IntegrityError # Certifique-se de que está importado
 
 usuario_bp = Blueprint('usuario_bp', __name__, template_folder='../templates/usuarios')
 
@@ -78,20 +78,18 @@ def add_user():
             flash('O nome não pode ser vazio.', 'danger')
             return render_template('add.html')
         
-        # Divide o nome em partes e filtra partes vazias (para múltiplos espaços)
         nome_partes = [parte for parte in nome_stripped.split() if parte]
         
-        if len(nome_partes) < 2: # Pelo menos dois nomes (nome e sobrenome)
+        if len(nome_partes) < 2:
             flash('Por favor, digite pelo menos o nome e o sobrenome.', 'danger')
             return render_template('add.html')
         
-        # NOVO: Validação para que cada parte do nome tenha mais de 1 caractere
         for parte in nome_partes:
             if len(parte) <= 1:
                 flash('Cada parte do nome (nome e sobrenome) deve ter mais de um caractere.', 'danger')
                 return render_template('add.html')
 
-        if not re.fullmatch(r'^[a-zA-Z\sÀ-ÿ]+$', nome_stripped): # Sem números ou caracteres especiais
+        if not re.fullmatch(r'^[a-zA-Z\sÀ-ÿ]+$', nome_stripped):
             flash('O nome não pode conter números ou caracteres especiais.', 'danger')
             return render_template('add.html')
 
@@ -116,6 +114,7 @@ def add_user():
             flash('A senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).', 'danger')
             return render_template('add.html')
         
+        # Lista negra de senhas comuns (exemplo básico)
         common_passwords = ['12345678', 'password', 'qwerty', 'admin', 'usuario', 'senha123']
         if senha.lower() in common_passwords:
             flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')
@@ -276,11 +275,15 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
         flash('Usuário excluído com sucesso!', 'success')
-    except IntegrityError:
+    except IntegrityError as e: # Captura a IntegrityError e usa 'e' para inspecioná-la
         db.session.rollback()
+        # Verifica se o erro é especificamente de violação de chave estrangeira
+        # A mensagem de erro do psycopg2 (e.orig) pode ser verificada para ser mais específico
+        # No entanto, para uma mensagem genérica, basta o IntegrityError
         flash('Não foi possível excluir o usuário. Existem contas ou tipos de transação associados a ele. Por favor, exclua-os primeiro.', 'danger')
     except Exception as e:
         db.session.rollback()
+        # Esta mensagem será exibida para qualquer outro erro que não seja IntegrityError
         flash(f'Erro inesperado ao excluir usuário: {e}', 'danger')
     
     return redirect(url_for('usuario_bp.list_users'))
