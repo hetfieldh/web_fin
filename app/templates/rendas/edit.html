@@ -1,0 +1,43 @@
+{# app/templates/rendas/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Rendas{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar Renda: {{ renda.descricao }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('renda_bp.edit_renda', renda_id=renda.id) }}">
+    <div class="form-group">
+        <label for="descricao">Descrição da Renda:</label>
+        <input type="text" id="descricao" name="descricao" value="{{ renda.descricao }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required disabled>
+            {% for tipo in tipos_renda %}
+            <option value="{{ tipo }}" {% if renda.tipo==tipo %}selected{% endif %}>{{ tipo }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="tipo" value="{{ renda.tipo }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('renda_bp.list_rendas') }}" class="btn-secondary" style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

@@ -16,12 +16,6 @@
             </li>
 
             <li>
-                <a href="#" class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
-                    <i class="fas fa-exchange-alt"></i> Transações
-                </a>
-            </li>
-
-            <li>
                 <a href="{{ url_for('conta_bp.list_contas') }}"
                     class="{% if 'conta_bp' in request.endpoint %}active{% endif %}">
                     <i class="fas fa-wallet"></i> Contas Bancárias
@@ -32,6 +26,19 @@
                 <a href="{{ url_for('crediario_bp.list_crediarios') }}"
                     class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
                     <i class="fas fa-credit-card"></i> Crediários
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('renda_bp.list_rendas') }}"
+                    class="{% if 'crediario_bp' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-credit-card"></i> Rendas
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i> Transações
                 </a>
             </li>
 

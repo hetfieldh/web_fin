@@ -1,10 +1,10 @@
-{# app/templates/crediario_grupos/add.html #}
+{# app/templates/rendas/add.html #}
 {% extends 'base.html' %}
 
-{% block title %}WebFin - Crediários{% endblock %}
+{% block title %}WebFin - Rendas{% endblock %}
 
 {% block topbar_content %}
-<h1>Adicionar Grupo de Crediário</h1>
+<h1>Adicionar Renda</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -23,27 +23,23 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST" action="{{ url_for('crediario_grupo_bp.add_crediario_grupo') }}">
+<form method="POST" action="{{ url_for('renda_bp.add_renda') }}">
     <div class="form-group">
-        <label for="grupo">Nome do Grupo (Ex: Compras Parceladas, Estornos Loja X):</label>
-        <input type="text" id="grupo" name="grupo" required value="{{ request.form.grupo if request.form else '' }}">
+        <label for="descricao">Descrição da Renda (Ex: Salário, Aluguel, Bônus):</label>
+        <input type="text" id="descricao" name="descricao" required
+            value="{{ request.form.descricao if request.form else '' }}">
     </div>
     <div class="form-group">
         <label for="tipo">Tipo:</label>
         <select id="tipo" name="tipo" required>
             <option value="">Selecione um tipo</option>
-            {% for tipo in tipos_grupo %}
+            {% for tipo in tipos_renda %}
             <option value="{{ tipo }}" {% if request.form and request.form.tipo==tipo %}selected{% endif %}>{{ tipo }}
             </option>
             {% endfor %}
         </select>
     </div>
-    <div class="form-group">
-        <label for="descricao">Descrição (opcional):</label>
-        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
-    </div>
-    <button type="submit" class="btn-primary">Adicionar Grupo</button>
-    <a href="{{ url_for('crediario_grupo_bp.list_crediario_grupos') }}" class="btn-secondary"
-        style="margin-left: 10px;">Cancelar</a>
+    <button type="submit" class="btn-primary">Adicionar Renda</button>
+    <a href="{{ url_for('renda_bp.list_rendas') }}" class="btn-secondary" style="margin-left: 10px;">Cancelar</a>
 </form>
 {% endblock %}
