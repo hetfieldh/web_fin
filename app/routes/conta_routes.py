@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.conta_model import Conta, tipo_conta_enum
 from sqlalchemy.exc import IntegrityError
+import re # Importa o módulo de expressões regulares
 
 # Criação do Blueprint para as rotas de contas
 conta_bp = Blueprint('conta_bp', __name__, template_folder='../templates/contas')
@@ -30,24 +31,41 @@ def add_conta():
         limite_str = request.form.get('limite')
         descricao = request.form.get('descricao')
 
-        # --- Validações Iniciais ---
+        # --- Validações Iniciais e de Formato ---
         if not (nome_banco and conta_num and tipo_from_form):
             flash('Por favor, preencha todos os campos obrigatórios (Banco, Número da Conta, Tipo).', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
 
-        # 1. Validação e formatação de Agência
+        # 1. Validação do Nome do Banco
+        nome_banco_stripped = nome_banco.strip()
+        if not nome_banco_stripped:
+            flash('O nome do banco não pode ser vazio.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
+        if len(nome_banco_stripped) < 3: # Mínimo de 3 caracteres
+            flash('O nome do banco deve ter no mínimo 3 caracteres.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
+        # Permite letras, números, espaços, &, . e -
+        if not re.fullmatch(r'^[a-zA-Z0-9\s&.-]+$', nome_banco_stripped):
+            flash('O nome do banco contém caracteres inválidos. Use apenas letras, números, espaços, &, . ou -.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
+        nome_banco = nome_banco_stripped # Atualiza a variável com o valor validado
+
+        # 2. Validação e formatação de Agência
         if agencia: # Agência é opcional, mas se preenchida, deve ser validada
-            if not agencia.isdigit() or len(agencia) > 4:
-                flash('Agência deve conter no máximo 4 números.', 'danger')
+            if not agencia.isdigit() or len(agencia) != 4: # EXATO 4 dígitos
+                flash('Agência deve conter exatamente 4 números.', 'danger')
                 return render_template('contas/add.html', tipos_conta=tipos_conta)
             agencia = agencia.zfill(4) # Completa com zeros à esquerda
 
-        # 2. Validação de Número de Conta (apenas números)
+        # 3. Validação de Número de Conta (apenas números e comprimento)
         if not conta_num.isdigit():
             flash('Número da Conta deve conter apenas números.', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
+        if len(conta_num) < 6 or len(conta_num) > 20: # Mínimo 6, máximo 20 dígitos
+            flash('Número da Conta deve ter entre 6 e 20 dígitos.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
 
-        # 3. Validação do Tipo de Conta (ENUM)
+        # 4. Validação do Tipo de Conta (ENUM)
         tipo_to_save = None
         if tipo_from_form in tipos_conta:
             tipo_to_save = tipo_from_form
@@ -56,7 +74,7 @@ def add_conta():
             flash('Tipo de conta inválido selecionado.', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
 
-        # 4. Validação de Saldo Inicial e Limite (numéricos e >= 0)
+        # 5. Validação de Saldo Inicial e Limite (numéricos e >= 0)
         try:
             saldo_inicial = float(saldo_inicial_str.replace(',', '.')) if saldo_inicial_str else 0.00
             if saldo_inicial < 0:
@@ -72,11 +90,16 @@ def add_conta():
             flash('Saldo Inicial e Limite devem ser números válidos.', 'danger')
             return render_template('contas/add.html', tipos_conta=tipos_conta)
         
-        # 5. Validação Condicional do Limite (apenas para Corrente e Digital)
+        # 6. Validação Condicional do Limite (apenas para Corrente e Digital)
         if tipo_to_save not in ['Corrente', 'Digital']:
             if limite > 0:
                 flash('Limite só é aplicável para contas do tipo Corrente ou Digital. O limite foi definido como 0.', 'warning')
             limite = 0.00 # Força o limite a ser zero para outros tipos
+
+        # 7. Validação de Descrição (tamanho máximo)
+        if descricao and len(descricao) > 255:
+            flash('A descrição não pode ter mais de 255 caracteres.', 'danger')
+            return render_template('contas/add.html', tipos_conta=tipos_conta)
 
         # --- Criação e Persistência da Conta ---
         new_conta = Conta(
@@ -135,7 +158,12 @@ def edit_conta(conta_id):
         else:
             conta.limite = limite # Atribui o limite se o tipo for Corrente ou Digital
 
-        conta.descricao = descricao
+        # 3. Validação de Descrição (tamanho máximo)
+        if descricao and len(descricao) > 255:
+            flash('A descrição não pode ter mais de 255 caracteres.', 'danger')
+            return render_template('contas/edit.html', conta=conta, tipos_conta=tipos_conta)
+
+        conta.descricao = descricao # Atribui a descrição (já validada pelo tamanho)
 
         try:
             db.session.commit()
