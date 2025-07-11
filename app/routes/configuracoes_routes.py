@@ -1,10 +1,11 @@
 # app/routes/configuracoes_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user, login_user # Importar login_user
-from app import db, login_manager # Importar login_manager
-from app.models.usuario_model import Usuario # Importa o modelo de usuário
+from flask_login import login_required, current_user, login_user
+from app import db, login_manager
+from app.models.usuario_model import Usuario
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
+import re # Importa o módulo de expressões regulares
 
 # Criação do Blueprint para as rotas de configurações
 configuracoes_bp = Blueprint('configuracoes_bp', __name__, template_folder='../templates/configuracoes')
@@ -13,17 +14,14 @@ configuracoes_bp = Blueprint('configuracoes_bp', __name__, template_folder='../t
 @configuracoes_bp.route('/settings', methods=['GET'])
 @login_required
 def settings():
-    # Redireciona administradores para o dashboard, pois eles gerenciam usuários em outro local
     if current_user.is_admin:
         flash('Administradores gerenciam usuários na seção "Usuários".', 'info')
         return redirect(url_for('dashboard_bp.dashboard'))
 
-    # Lista de opções para a página inicial padrão
     homepage_options = [
         ('dashboard_bp.dashboard', 'Dashboard'),
         ('conta_bp.list_contas', 'Minhas Contas'),
         ('conta_transacao_bp.list_tipos_transacao', 'Tipos de Transação')
-        # Adicione mais opções aqui conforme novas funcionalidades forem criadas
     ]
 
     return render_template('configuracoes/settings.html', user=current_user, homepage_options=homepage_options)
@@ -43,7 +41,35 @@ def update_profile():
         flash('Nome e Email são obrigatórios.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
-    # Verifica se o email já existe para outro usuário
+    # NOVO: Validação do campo Nome
+    nome_stripped = new_nome.strip()
+    if not nome_stripped:
+        flash('O nome não pode ser vazio.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    
+    nome_partes = [parte for parte in nome_stripped.split() if parte]
+    if len(nome_partes) < 2:
+        flash('Por favor, digite pelo menos o nome e o sobrenome.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    
+    for parte in nome_partes:
+        if len(parte) <= 1:
+            flash('Cada parte do nome (nome e sobrenome) deve ter mais de um caractere.', 'danger')
+            return redirect(url_for('configuracoes_bp.settings'))
+
+    if not re.fullmatch(r'^[a-zA-Z\sÀ-ÿ]+$', nome_stripped):
+        flash('O nome não pode conter números ou caracteres especiais.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+
+
+    # NOVO: Validação de formato de e-mail e conversão para minúsculas
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, new_email):
+        flash('Por favor, insira um endereço de e-mail válido.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    new_email = new_email.lower() # Converte o e-mail para minúsculas
+
+    # Verifica se o email já existe para outro usuário (usando o email já em minúsculas)
     existing_user_with_email = Usuario.query.filter(
         Usuario.email == new_email,
         Usuario.id != current_user.id
@@ -54,12 +80,11 @@ def update_profile():
         return redirect(url_for('configuracoes_bp.settings'))
 
     try:
-        current_user.nome = new_nome
-        current_user.email = new_email
+        current_user.nome = nome_stripped # Usa o nome limpo e validado
+        current_user.email = new_email # Usa o email em minúsculas e validado
         db.session.commit()
         flash('Perfil atualizado com sucesso!', 'success')
-        # Após a atualização, recarrega o usuário na sessão para refletir as mudanças
-        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
+        login_user(current_user, remember=True)
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao atualizar perfil: {e}', 'danger')
@@ -90,16 +115,28 @@ def change_password():
         flash('A nova senha e a confirmação de senha não coincidem.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
-    if len(new_password) < 6: # Exemplo de validação de senha
-        flash('A nova senha deve ter no mínimo 6 caracteres.', 'danger')
+    # NOVO: Validação de força da nova senha
+    if len(new_password) < 8:
+        flash('A nova senha deve ter no mínimo 8 caracteres.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    if not re.search(r'\d', new_password):
+        flash('A nova senha deve conter pelo menos um número.', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+        flash('A nova senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).', 'danger')
+        return redirect(url_for('configuracoes_bp.settings'))
+    
+    # NOVO: Lista negra de senhas comuns (exemplo básico)
+    common_passwords = ['12345678', 'password', 'qwerty', 'admin', 'usuario', 'senha123']
+    if new_password.lower() in common_passwords:
+        flash('Esta senha é muito comum. Por favor, escolha uma senha mais forte.', 'danger')
         return redirect(url_for('configuracoes_bp.settings'))
 
     try:
         current_user.senha_hash = generate_password_hash(new_password)
         db.session.commit()
         flash('Senha alterada com sucesso!', 'success')
-        # Após a atualização, recarrega o usuário na sessão para refletir as mudanças
-        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
+        login_user(current_user, remember=True)
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao alterar senha: {e}', 'danger')
@@ -116,7 +153,6 @@ def update_homepage():
 
     new_homepage = request.form.get('default_homepage')
 
-    # Lista de opções válidas para a página inicial padrão
     valid_homepage_routes = [
         'dashboard_bp.dashboard',
         'conta_bp.list_contas',
@@ -130,14 +166,9 @@ def update_homepage():
         current_user.default_homepage = new_homepage
         db.session.commit()
         flash('Página inicial padrão atualizada com sucesso!', 'success')
-        
-        # ESSENCIAL: Recarregar o usuário na sessão do Flask-Login
-        # Isso garante que o 'current_user' reflita a mudança imediatamente
-        login_user(current_user, remember=True) # Re-logar o usuário para atualizar current_user
-            
+        login_user(current_user, remember=True)
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao atualizar página inicial padrão: {e}', 'danger')
 
     return redirect(url_for('configuracoes_bp.settings'))
-

@@ -2,11 +2,10 @@
 
 {% block title %}WebFin - Usuários{% endblock %}
 
+{# Conteúdo da topbar para o título da página e mensagens flash #}
 {% block topbar_content %}
 <h1>Editar Usuário: {{ user.nome }}</h1>
-{% endblock %}
 
-{% block content %}
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 <div class="flash-messages">
@@ -21,7 +20,9 @@
 </div>
 {% endif %}
 {% endwith %}
+{% endblock %}
 
+{% block content %}
 <form method="POST" action="{{ url_for('usuario_bp.edit_user', user_id=user.id) }}">
     <div class="form-group">
         <label for="nome">Nome:</label>
@@ -37,7 +38,11 @@
     </div>
     <div class="form-group">
         <label for="senha">Nova Senha (deixe em branco para não alterar):</label>
-        <input type="password" id="senha" name="senha">
+        <input type="password" id="senha" name="senha"> {# REMOVIDO: required #}
+    </div>
+    <div class="form-group">
+        <label for="confirm_senha">Confirmar Nova Senha:</label>
+        <input type="password" id="confirm_senha" name="confirm_senha"> {# REMOVIDO: required #}
     </div>
     <div class="form-group" style="display: flex; align-items: center;">
         <input type="checkbox" id="is_active" name="is_active" {% if user.is_active %}checked{% endif %}
