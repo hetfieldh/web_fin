@@ -19,7 +19,9 @@ def settings():
     homepage_options = [
         ('dashboard_bp.dashboard', 'Dashboard'),
         ('conta_bp.list_contas', 'Minhas Contas'),
-        ('conta_transacao_bp.list_tipos_transacao', 'Tipos de Transação')
+        ('crediario_bp.list_crediarios', 'Crediários'), 
+        ('renda_bp.list_rendas', 'Rendas'), 
+        ('despesa_receita_bp.list_despesas_receitas', 'Despesas e Receitas')
     ]
 
     return render_template('configuracoes/settings.html', user=current_user, homepage_options=homepage_options)
@@ -146,7 +148,9 @@ def update_homepage():
     valid_homepage_routes = [
         'dashboard_bp.dashboard',
         'conta_bp.list_contas',
-        'conta_transacao_bp.list_tipos_transacao'
+        'crediario_bp.list_crediarios', 
+        'renda_bp.list_rendas', 
+        'despesa_receita_bp.list_despesas_receitas'
     ]
     if new_homepage not in valid_homepage_routes:
         flash('Página inicial padrão inválida selecionada.', 'danger')

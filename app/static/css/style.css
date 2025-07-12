@@ -21,7 +21,7 @@ body {
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Source Sans 3', sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--bg-primary);
@@ -48,8 +48,16 @@ body {
 }
 
 .sidebar .logo img {
-    max-width: 80px;
+    max-width: 100px;
     height: auto;
+}
+
+.logo-shadow {
+    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.3));
+}
+
+.logo-shadow-2 {
+    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.6))
 }
 
 .sidebar nav {
@@ -108,7 +116,7 @@ body {
 /* Topbar para títulos de página e mensagens flash */
 .topbar {
     background-color: #ffffff;
-    padding: 15px 20px;
+    padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-light);
@@ -136,7 +144,7 @@ body {
 /* Estilo para a área de conteúdo que rola */
 .content-area {
     flex-grow: 1;
-    padding: 10px 20px;
+    padding: 0.1px 20px;
     overflow-y: auto;
 }
 
@@ -144,7 +152,7 @@ body {
 .button-group-top {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
 }
 
@@ -152,23 +160,24 @@ body {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 5px;
+    margin-top: 0px;
     background-color: #FFF;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
     overflow: hidden;
+    font-size: 0.9em;
 }
 
 .data-table th,
 .data-table td {
-    padding: 2px 15px;
+    padding: 0px 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-light);
 }
 
 .data-table th {
     background-color: var(--sidebar-bg);
-    padding: 7px 15px;
+    padding: 3px 15px;
     color: var(--sidebar-text);
     font-weight: 500;
 }
@@ -270,7 +279,7 @@ body {
 }
 
 
-/* --- Estilos para Flash Messages (Mensagens de Alerta) --- */
+/* Estilos para Flash Messages (Mensagens de Alerta) */
 .alert {
     padding: 12px 20px;
     margin-bottom: 20px;
