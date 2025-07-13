@@ -11,6 +11,7 @@
     --border-light: #DEE2E6;
     --sidebar-bg: #34465D;
     --sidebar-text: #f5f6f7;
+    --color-debito: #690a13;
 }
 
 /* Garante que html e body ocupem 100% da altura e não rolem */
@@ -48,7 +49,7 @@ body {
 }
 
 .sidebar .logo img {
-    max-width: 100px;
+    max-width: 120px;
     height: auto;
 }
 
@@ -57,7 +58,7 @@ body {
 }
 
 .logo-shadow-2 {
-    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.6))
+    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.6));
 }
 
 .sidebar nav {
@@ -90,11 +91,43 @@ body {
     font-size: 0.85em;
 }
 
-.sidebar nav ul li a:hover,
-.sidebar nav ul li a.active {
+.sidebar nav ul li a:hover {
     background-color: var(--border-light);
     color: var(--sidebar-bg);
 }
+
+.sidebar nav ul li a.active {
+    background-color: var(--border-light);
+    color: var(--sidebar-bg);
+    font-weight: bold;
+}
+
+.sidebar nav ul li.has-submenu .submenu-arrow {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.sidebar nav ul .submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.sidebar nav ul .submenu li a {
+    padding-left: 30px;
+    font-size: 0.9em;
+}
+
+.sidebar nav ul li.has-submenu.expanded-parent>a.submenu-toggle {
+    background-color: transparent;
+    color: var(--sidebar-text);
+    font-weight: normal;
+}
+
 
 /* Estilo para o texto do rodapé da sidebar */
 .sidebar-footer .footer-text {
@@ -116,7 +149,8 @@ body {
 /* Topbar para títulos de página e mensagens flash */
 .topbar {
     background-color: #ffffff;
-    padding: 10px 20px;
+    padding: 15px 20px;
+    /* Restaurado padding vertical para dar espaço às mensagens */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-light);
@@ -138,13 +172,15 @@ body {
 /* Ajuste para flash messages dentro da topbar */
 .topbar .flash-messages {
     width: 100%;
-    margin-bottom: 0;
+    margin-bottom: 15px;
+    /* RESTAURADO: Margem inferior para separar do conteúdo */
 }
 
 /* Estilo para a área de conteúdo que rola */
 .content-area {
     flex-grow: 1;
-    padding: 0.1px 20px;
+    padding: 10px 20px;
+    /* Restaurado padding para o conteúdo principal */
     overflow-y: auto;
 }
 
@@ -152,7 +188,8 @@ body {
 .button-group-top {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    /* Restaurado margem inferior */
     flex-wrap: wrap;
 }
 
@@ -160,7 +197,8 @@ body {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0px;
+    margin-top: 5px;
+    /* Restaurado margem superior */
     background-color: #FFF;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
@@ -170,14 +208,16 @@ body {
 
 .data-table th,
 .data-table td {
-    padding: 0px 15px;
+    padding: 2px 15px;
+    /* Restaurado padding vertical */
     text-align: left;
     border-bottom: 1px solid var(--border-light);
 }
 
 .data-table th {
     background-color: var(--sidebar-bg);
-    padding: 3px 15px;
+    padding: 7px 15px;
+    /* Restaurado padding vertical */
     color: var(--sidebar-text);
     font-weight: 500;
 }
@@ -192,6 +232,13 @@ body {
 
 .data-table.audit-log-table td {
     font-size: 0.7em;
+}
+
+/* Estilo para linhas de débito na tabela de movimentos */
+.data-table .movimento-debito {
+    color: var(--color-debito);
+    background-color: rgba(248, 152, 152, 0.242);
+    font-weight: normal;
 }
 
 /* Estilo para Botões e Links de Ação em Tabelas */

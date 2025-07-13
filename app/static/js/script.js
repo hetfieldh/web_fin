@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const saldoInicialInput = document.getElementById('saldo_inicial');
     const limiteInput = document.getElementById('limite');
+    const valorInput = document.getElementById('valor');
 
     if (saldoInicialInput) {
         formatNumericInput(saldoInicialInput);
@@ -90,4 +91,48 @@ document.addEventListener('DOMContentLoaded', function () {
     if (limiteInput) {
         formatNumericInput(limiteInput);
     }
+    if (valorInput) {
+        formatNumericInput(valorInput);
+    }
+
+    // Lógica do submenu da sidebar
+    const submenuToggles = document.querySelectorAll('.submenu-toggle');
+
+    submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            const parentLi = this.closest('li.has-submenu');
+            const submenu = parentLi.querySelector('.submenu');
+            const arrow = this.querySelector('.submenu-arrow');
+
+            if (submenu.style.display === 'block') {
+                submenu.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+                parentLi.classList.remove('active-parent');
+            } else {
+                document.querySelectorAll('.submenu').forEach(sub => {
+                    if (sub !== submenu) sub.style.display = 'none';
+                });
+                document.querySelectorAll('.submenu-arrow').forEach(arr => {
+                    if (arr !== arrow) arr.style.transform = 'rotate(0deg)';
+                });
+                document.querySelectorAll('.has-submenu').forEach(parent => {
+                    if (parent !== parentLi) parent.classList.remove('active-parent');
+                });
+
+                submenu.style.display = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+                parentLi.classList.add('active-parent');
+            }
+        });
+
+        const parentLi = toggle.closest('li.has-submenu');
+        const submenu = parentLi.querySelector('.submenu');
+        const activeSubmenuItem = submenu.querySelector('a.active');
+        if (activeSubmenuItem) {
+            submenu.style.display = 'block';
+            toggle.querySelector('.submenu-arrow').style.transform = 'rotate(90deg)';
+            parentLi.classList.add('active-parent');
+        }
+    });
 });

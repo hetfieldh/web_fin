@@ -43,10 +43,20 @@
                 </a>
             </li>
 
-            <li>
-                <a href="#" class="{% if request.endpoint == 'transacao_bp.list_transactions' %}active{% endif %}">
+            <li
+                class="has-submenu {% if request.endpoint.startswith('conta_movimento_bp') %}expanded-parent{% endif %}">
+                <a href="#" class="submenu-toggle">
                     <i class="fas fa-exchange-alt"></i> Transações
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
                 </a>
+                <ul class="submenu">
+                    <li>
+                        <a href="{{ url_for('conta_movimento_bp.list_movimentos') }}"
+                            class="{% if request.endpoint.startswith('conta_movimento_bp') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Bancária
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             {% if current_user.is_authenticated and current_user.is_admin %}
