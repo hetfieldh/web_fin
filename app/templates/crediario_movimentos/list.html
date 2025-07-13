@@ -1,10 +1,10 @@
-{# app/templates/conta_movimentos/list.html #}
+{# app/templates/crediario_movimentos/list.html #}
 {% extends 'base.html' %}
 
 {% block title %}WebFin - Transações{% endblock %}
 
 {% block topbar_content %}
-<h1>Transações Bancárias</h1>
+<h1>Transações de Crediário</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -24,7 +24,7 @@
 
 {% block content %}
 <div class="button-group-top">
-    <a href="{{ url_for('conta_movimento_bp.add_movimento') }}" class="btn-primary">
+    <a href="{{ url_for('crediario_movimento_bp.add_movimento_crediario') }}" class="btn-primary">
         <i class="fas fa-plus-circle"></i> Adicionar
     </a>
 </div>
@@ -33,28 +33,35 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th>Conta</th>
-            <th>Transação</th>
-            <th>Data</th>
-            <th>Valor</th>
+            <th>Crediário</th>
+            <th>Grupo</th>
+            <th>Data Compra</th>
+            <th>Valor Total</th>
+            <th>Parcelas</th>
+            <th>1ª Parcela</th>
+            <th>Última Parcela</th>
+            <th>Valor Parcela</th>
             <th>Descrição</th>
-            <th>Data Criação</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
         {% for movimento in movimentos %}
-        <tr class="{% if movimento.conta_transacao_item.tipo == 'Débito' %}movimento-debito{% endif %}">
-            <td>{{ movimento.conta.nome_banco }} - {{ movimento.conta.conta }} ({{ movimento.conta.tipo }})</td>
-            <td>{{ movimento.conta_transacao_item.transacao }} ({{ movimento.conta_transacao_item.tipo }})</td>
-            <td>{{ movimento.data.strftime('%d/%m/%Y') }}</td>
-            <td>R$ {{ "%.2f"|format(movimento.valor|float) }}</td>
+        <tr>
+            <td>{{ movimento.crediario.crediario }}</td>
+            <td>{{ movimento.crediario_grupo.grupo }} ({{ movimento.crediario_grupo.tipo }})</td>
+            <td>{{ movimento.data_compra.strftime('%d/%m/%Y') }}</td>
+            <td>R$ {{ "%.2f"|format(movimento.valor_total|float) }}</td>
+            <td>{{ movimento.num_parcelas }}</td>
+            <td>{{ movimento.primeira_parcela.strftime('%m/%Y') }}</td>
+            <td>{{ movimento.ultima_parcela.strftime('%m/%Y') }}</td>
+            <td>R$ {{ "%.2f"|format(movimento.valor_parcela_mensal|float) }}</td>
             <td>{{ movimento.descricao if movimento.descricao else '-' }}</td>
-            <td>{{ movimento.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
             <td class="action-buttons">
-                <a href="{{ url_for('conta_movimento_bp.edit_movimento', movimento_id=movimento.id) }}"><i
+                <a href="{{ url_for('crediario_movimento_bp.edit_movimento_crediario', movimento_id=movimento.id) }}"><i
                         class="fas fa-edit"></i> Editar</a>
-                <form action="{{ url_for('conta_movimento_bp.delete_movimento', movimento_id=movimento.id) }}"
+                <form
+                    action="{{ url_for('crediario_movimento_bp.delete_movimento_crediario', movimento_id=movimento.id) }}"
                     method="POST" style="display:inline;">
                     <button type="submit"
                         onclick="return confirm('Tem certeza que deseja excluir este movimento? Esta ação é irreversível!');"
@@ -68,6 +75,6 @@
     </tbody>
 </table>
 {% else %}
-<p>Você ainda não tem nenhum movimento bancário cadastrado.</p>
+<p>Você ainda não tem nenhuma movimentação de crediário cadastrada.</p>
 {% endif %}
 {% endblock %}

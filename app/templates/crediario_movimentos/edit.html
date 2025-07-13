@@ -1,0 +1,94 @@
+{# app/templates/crediario_movimentos/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Transações{% endblock %}
+
+{# Conteúdo da topbar para o título da página e mensagens flash #}
+{% block topbar_content %}
+<h1>Editar: {{ movimento.crediario.crediario }} ({{ movimento.data_compra.strftime('%d/%m/%Y')
+    }})</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST"
+    action="{{ url_for('crediario_movimento_bp.edit_movimento_crediario', movimento_id=movimento.id) }}">
+    <div class="form-group">
+        <label for="crediario_id">Crediário:</label>
+        {# readonly para tornar o campo somente leitura #}
+        <select id="crediario_id" name="crediario_id" required disabled>
+            <option value="{{ movimento.crediario_id }}" selected>{{ movimento.crediario.crediario }} ({{
+                movimento.crediario.tipo }})</option>
+        </select>
+        <input type="hidden" name="crediario_id" value="{{ movimento.crediario_id }}">
+    </div>
+    <div class="form-group">
+        <label for="crediario_grupo_id">Grupo de Crediário:</label>
+        {# disabled para tornar o campo não editável e não enviá-lo no POST #}
+        <select id="crediario_grupo_id" name="crediario_grupo_id" required disabled>
+            <option value="{{ movimento.crediario_grupo_id }}" selected>{{ movimento.crediario_grupo.grupo }} ({{
+                movimento.crediario_grupo.tipo }})</option>
+        </select>
+        <input type="hidden" name="crediario_grupo_id" value="{{ movimento.crediario_grupo_id }}">
+    </div>
+    <div class="form-group">
+        <label for="data_compra">Data da Compra:</label>
+        {# readonly para tornar o campo somente leitura #}
+        <input type="date" id="data_compra" name="data_compra" required
+            value="{{ movimento.data_compra.strftime('%Y-%m-%d') }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="valor_total">Valor Total:</label>
+        {# Este campo continua editável #}
+        <input type="text" id="valor_total" name="valor_total" value="{{ '%.2f'|format(movimento.valor_total|float) }}"
+            placeholder="Ex: 1000.00">
+    </div>
+    <div class="form-group">
+        <label for="num_parcelas">Número de Parcelas:</label>
+        {# readonly para tornar o campo somente leitura #}
+        <input type="number" id="num_parcelas" name="num_parcelas" value="{{ movimento.num_parcelas }}" required min="1"
+            readonly>
+    </div>
+    <div class="form-group">
+        <label for="primeira_parcela">Data da Primeira Parcela (MM/AAAA):</label>
+        {# ALTERADO: type para month e formato para YYYY-MM para compatibilidade com input type="month" #}
+        <input type="month" id="primeira_parcela" name="primeira_parcela"
+            value="{{ movimento.primeira_parcela.strftime('%Y-%m') }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="ultima_parcela">Data da Última Parcela (MM/AAAA):</label>
+        {# ALTERADO: type para month e formato para YYYY-MM para compatibilidade com input type="month" #}
+        <input type="month" id="ultima_parcela" name="ultima_parcela"
+            value="{{ movimento.ultima_parcela.strftime('%Y-%m') }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="valor_parcela_mensal">Valor da Parcela Mensal:</label>
+        {# readonly para tornar o campo somente leitura #}
+        <input type="text" id="valor_parcela_mensal" name="valor_parcela_mensal"
+            value="{{ '%.2f'|format(movimento.valor_parcela_mensal|float) }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        {# Este campo continua editável #}
+        <input type="text" id="descricao" name="descricao"
+            value="{{ movimento.descricao if movimento.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar</button>
+    <a href="{{ url_for('crediario_movimento_bp.list_movimentos_crediario') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

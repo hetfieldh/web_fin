@@ -1,10 +1,10 @@
 {# app/templates/conta_movimentos/add.html #}
 {% extends 'base.html' %}
 
-{% block title %}WebFin - Adicionar Movimento Bancário{% endblock %}
+{% block title %}WebFin - Transações{% endblock %}
 
 {% block topbar_content %}
-<h1>Adicionar Novo Movimento Bancário</h1>
+<h1>Adicionar Transação Bancária</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -58,7 +58,7 @@
         <label for="descricao">Descrição (opcional):</label>
         <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
     </div>
-    <button type="submit" class="btn-primary">Adicionar Movimento</button>
+    <button type="submit" class="btn-primary">Adicionar</button>
     <a href="{{ url_for('conta_movimento_bp.list_movimentos') }}" class="btn-secondary"
         style="margin-left: 10px;">Cancelar</a>
 </form>

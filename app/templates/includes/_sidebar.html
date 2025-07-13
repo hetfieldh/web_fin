@@ -56,6 +56,12 @@
                             <i class="fas fa-money-bill-transfer"></i> Bancária
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ url_for('crediario_movimento_bp.list_movimentos_crediario') }}"
+                            class="{% if request.endpoint.startswith('crediario_movimento_bp') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Crediário
+                        </a>
+                    </li>
                 </ul>
             </li>
 

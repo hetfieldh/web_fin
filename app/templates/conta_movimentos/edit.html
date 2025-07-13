@@ -1,10 +1,10 @@
 {# app/templates/conta_movimentos/edit.html #}
 {% extends 'base.html' %}
 
-{% block title %}WebFin - Editar Movimento Bancário{% endblock %}
+{% block title %}WebFin - Transações{% endblock %}
 
 {% block topbar_content %}
-<h1>Editar Movimento Bancário: {{ movimento.conta.nome_banco }} ({{ movimento.data.strftime('%d/%m/%Y') }})</h1>
+<h1>Editar: {{ movimento.conta.nome_banco }} ({{ movimento.data.strftime('%d/%m/%Y') }})</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -54,7 +54,7 @@
         <input type="text" id="descricao" name="descricao"
             value="{{ movimento.descricao if movimento.descricao else '' }}">
     </div>
-    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <button type="submit" class="btn-primary">Salvar</button>
     <a href="{{ url_for('conta_movimento_bp.list_movimentos') }}" class="btn-secondary"
         style="margin-left: 10px;">Cancelar</a>
 </form>

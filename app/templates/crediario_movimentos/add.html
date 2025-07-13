@@ -1,0 +1,75 @@
+{# app/templates/crediario_movimentos/add.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Transações{% endblock %}
+
+{% block topbar_content %}
+<h1>Adicionar Transação de Crediário</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('crediario_movimento_bp.add_movimento_crediario') }}">
+    <div class="form-group">
+        <label for="crediario_id">Crediário:</label>
+        <select id="crediario_id" name="crediario_id" required>
+            <option value="">Selecione um crediário</option>
+            {% for crediario in crediarios_disponiveis %}
+            <option value="{{ crediario.id }}" {% if request.form and request.form.crediario_id|int==crediario.id
+                %}selected{% endif %}>{{ crediario.crediario }} ({{ crediario.tipo }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="crediario_grupo_id">Grupo de Crediário:</label>
+        <select id="crediario_grupo_id" name="crediario_grupo_id" required>
+            <option value="">Selecione um grupo</option>
+            {% for grupo in grupos_disponiveis %}
+            <option value="{{ grupo.id }}" {% if request.form and request.form.crediario_grupo_id|int==grupo.id
+                %}selected{% endif %}>{{ grupo.grupo }} ({{ grupo.tipo }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="data_compra">Data da Compra:</label>
+        <input type="date" id="data_compra" name="data_compra" required
+            value="{{ request.form.data_compra if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="valor_total">Valor Total:</label>
+        <input type="text" id="valor_total" name="valor_total" required
+            value="{{ request.form.valor_total if request.form else '0.00' }}" placeholder="Ex: 1000.00">
+    </div>
+    <div class="form-group">
+        <label for="num_parcelas">Número de Parcelas:</label>
+        <input type="number" id="num_parcelas" name="num_parcelas" required
+            value="{{ request.form.num_parcelas if request.form else '1' }}" min="1">
+    </div>
+    <div class="form-group">
+        <label for="primeira_parcela">Data da Primeira Parcela (MM/AAAA):</label>
+        <input type="month" id="primeira_parcela" name="primeira_parcela" required
+            value="{{ request.form.primeira_parcela if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Adicionar</button>
+    <a href="{{ url_for('crediario_movimento_bp.list_movimentos_crediario') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}
