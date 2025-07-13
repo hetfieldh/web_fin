@@ -6,6 +6,7 @@ from app import db
 from app.models.crediario_movimento_model import CrediarioMovimento
 from app.models.crediario_model import Crediario
 from app.models.crediario_grupo_model import CrediarioGrupo
+from app.models.crediario_parcela_model import CrediarioParcela
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -123,6 +124,19 @@ def add_movimento_crediario():
         try:
             db.session.add(new_movimento)
             db.session.commit()
+
+            if new_movimento.num_parcelas > 0:
+                for i in range(new_movimento.num_parcelas):
+                    vencimento_parcela = new_movimento.primeira_parcela + relativedelta(months=i)
+                    parcela = CrediarioParcela(
+                        crediario_movimento_id=new_movimento.id,
+                        numero_parcela=i + 1,
+                        vencimento=vencimento_parcela,
+                        valor_parcela=new_movimento.valor_parcela_mensal
+                    )
+                    db.session.add(parcela)
+                db.session.commit()
+
             flash('Movimentação de Crediário adicionada com sucesso!', 'success')
             return redirect(url_for('crediario_movimento_bp.list_movimentos_crediario'))
         except IntegrityError:
@@ -163,17 +177,11 @@ def edit_movimento_crediario(movimento_id):
                                    crediarios_disponiveis=crediarios_disponiveis,
                                    grupos_disponiveis=grupos_disponiveis)
         
-        movimento.valor_total = valor_total
-        movimento.valor_parcela_mensal = round(movimento.valor_total / movimento.num_parcelas, 2)
-        movimento.ultima_parcela = movimento.primeira_parcela + relativedelta(months=movimento.num_parcelas - 1)
-
-
-        if descricao and len(descricao) > 255:
-            flash('A descrição não pode ter mais de 255 caracteres.', 'danger')
-            return render_template('crediario_movimentos/edit.html', 
-                                   movimento=movimento,
-                                   crediarios_disponiveis=crediarios_disponiveis,
-                                   grupos_disponiveis=grupos_disponiveis)
+        if movimento.valor_total != valor_total:
+            movimento.valor_total = valor_total
+            movimento.valor_parcela_mensal = round(movimento.valor_total / movimento.num_parcelas, 2)
+            for parcela in movimento.parcelas:
+                parcela.valor_parcela = movimento.valor_parcela_mensal
         
         movimento.descricao = descricao
 

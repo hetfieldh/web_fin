@@ -73,6 +73,7 @@ def init_db():
         import app.models.despesa_fixa_model
         import app.models.audit_log_model
         import app.models.conta_movimento_model
+        import app.models.crediario_parcela_model
         db.create_all()
         print("Tabelas do banco de dados criadas/verificadas.")
 
