@@ -1,0 +1,59 @@
+{# app/templates/renda_movimentos/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Transações{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar: {{ movimento.renda_item.descricao }} ({{ movimento.mes_ref.strftime('%m/%Y') }})</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('renda_movimento_bp.edit_renda_movimento', movimento_id=movimento.id) }}">
+    <div class="form-group">
+        <label for="renda_id">Item de Renda:</label>
+        <select id="renda_id" name="renda_id" required disabled>
+            <option value="{{ movimento.renda_id }}" selected>{{ movimento.renda_item.descricao }} ({{
+                movimento.renda_item.tipo }})</option>
+        </select>
+        <input type="hidden" name="renda_id" value="{{ movimento.renda_id }}">
+    </div>
+    <div class="form-group">
+        <label for="mes_ref">Mês de Referência (MM/AAAA):</label>
+        <input type="month" id="mes_ref" name="mes_ref" required value="{{ movimento.mes_ref.strftime('%Y-%m') }}"
+            readonly>
+    </div>
+    <div class="form-group">
+        <label for="mes_pagto">Mês de Pagamento (MM/AAAA):</label>
+        <input type="month" id="mes_pagto" name="mes_pagto" required value="{{ movimento.mes_pagto.strftime('%Y-%m') }}"
+            readonly>
+    </div>
+    <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor" value="{{ '%.2f'|format(movimento.valor|float) }}"
+            placeholder="Ex: 1000.00">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao"
+            value="{{ movimento.descricao if movimento.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar</button>
+    <a href="{{ url_for('renda_movimento_bp.list_renda_movimentos') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

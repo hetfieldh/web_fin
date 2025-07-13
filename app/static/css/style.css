@@ -11,7 +11,7 @@
     --border-light: #DEE2E6;
     --sidebar-bg: #34465D;
     --sidebar-text: #f5f6f7;
-    --color-debito: #690a13;
+    --color-debito: #ab1524;
 }
 
 /* Garante que html e body ocupem 100% da altura e não rolem */
@@ -237,7 +237,7 @@ body {
 /* Estilo para linhas de débito na tabela de movimentos */
 .data-table .movimento-debito {
     color: var(--color-debito);
-    background-color: rgba(248, 152, 152, 0.242);
+    /* background-color: rgba(248, 152, 152, 0.242); */
     font-weight: normal;
 }
 

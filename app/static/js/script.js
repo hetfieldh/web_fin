@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('crediario'),
         document.getElementById('grupo'),
         document.getElementById('descricao'),
-        document.getElementById('despesa_receita')
+        document.getElementById('despesa_receita'),
+        document.getElementById('descricao_renda_movimento') 
     ];
     nomeInputs.forEach(input => {
         if (input && !input.readOnly) {
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const saldoInicialInput = document.getElementById('saldo_inicial');
     const limiteInput = document.getElementById('limite');
     const valorInput = document.getElementById('valor');
+    const valorTotalInput = document.getElementById('valor_total');
 
     if (saldoInicialInput) {
         formatNumericInput(saldoInicialInput);
@@ -93,6 +95,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (valorInput) {
         formatNumericInput(valorInput);
+    }
+    if (valorTotalInput) {
+        formatNumericInput(valorTotalInput);
     }
 
     // Lógica do submenu da sidebar
@@ -108,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (submenu.style.display === 'block') {
                 submenu.style.display = 'none';
                 arrow.style.transform = 'rotate(0deg)';
-                parentLi.classList.remove('active-parent');
+                parentLi.classList.remove('expanded-parent');
             } else {
                 document.querySelectorAll('.submenu').forEach(sub => {
                     if (sub !== submenu) sub.style.display = 'none';
@@ -117,12 +122,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (arr !== arrow) arr.style.transform = 'rotate(0deg)';
                 });
                 document.querySelectorAll('.has-submenu').forEach(parent => {
-                    if (parent !== parentLi) parent.classList.remove('active-parent');
+                    if (parent !== parentLi) parent.classList.remove('expanded-parent');
                 });
 
                 submenu.style.display = 'block';
                 arrow.style.transform = 'rotate(90deg)';
-                parentLi.classList.add('active-parent');
+                parentLi.classList.add('expanded-parent');
             }
         });
 
@@ -132,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (activeSubmenuItem) {
             submenu.style.display = 'block';
             toggle.querySelector('.submenu-arrow').style.transform = 'rotate(90deg)';
-            parentLi.classList.add('active-parent');
+            parentLi.classList.add('expanded-parent');
         }
     });
 });
