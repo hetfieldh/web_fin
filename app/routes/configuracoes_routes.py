@@ -21,7 +21,10 @@ def settings():
         ('conta_bp.list_contas', 'Minhas Contas'),
         ('crediario_bp.list_crediarios', 'Crediários'), 
         ('renda_bp.list_rendas', 'Rendas'), 
-        ('despesa_receita_bp.list_despesas_receitas', 'Despesas e Receitas')
+        ('despesa_receita_bp.list_despesas_receitas', 'Despesas e Receitas'),
+        ('extrato_bancario_bp.selecionar_extrato', 'Extrato Bancário'),
+        ('extrato_crediario_bp.selecionar_extrato_crediario', 'Extrato Crediário'),
+        ('financiamento_bp.list_financiamentos', 'Financiamentos')
     ]
 
     return render_template('configuracoes/settings.html', user=current_user, homepage_options=homepage_options)
@@ -150,7 +153,10 @@ def update_homepage():
         'conta_bp.list_contas',
         'crediario_bp.list_crediarios', 
         'renda_bp.list_rendas', 
-        'despesa_receita_bp.list_despesas_receitas'
+        'despesa_receita_bp.list_despesas_receitas',
+        'extrato_bancario_bp.selecionar_extrato',
+        'extrato_crediario_bp.selecionar_extrato_crediario',
+        'financiamento_bp.list_financiamentos'
     ]
     if new_homepage not in valid_homepage_routes:
         flash('Página inicial padrão inválida selecionada.', 'danger')
