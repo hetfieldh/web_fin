@@ -1,0 +1,88 @@
+{# app/templates/extratos_crediarios/extrato.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Extrato de Crediários{% endblock %}
+
+{% block topbar_content %}
+<h1>Extrato de Crediários</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="extrato-header settings-section">
+    <div class="extrato-details-group">
+        {% if crediario_selecionado %}
+        <p><strong>Crediário:</strong>
+            <font color='blue'> {{ crediario_selecionado.crediario }} ({{ crediario_selecionado.tipo }})</font>
+        </p>
+        {% else %}
+        <p><strong>Crediário:</strong>
+            <font color='blue'>Todos
+        </p>
+        </font>
+        {% endif %}
+        <p><strong>Mês de Vencimento:</strong>
+            <font color='blue'>{{ mes_ano.strftime('%m/%Y') }}</font>
+        </p>
+    </div>
+</div>
+
+<div class="extrato-movimentos settings-section" style="margin-top: 20px;">
+
+    {% if parcelas %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Crediário</th>
+                <th>Grupo</th>
+                <th>Nº Parcela</th>
+                <th>Vencimento</th>
+                <th>Valor Parcela</th>
+                <th>Status</th>
+                <th>Data Compra</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parcela in parcelas %}
+            <tr
+                class="{% if parcela.status == 'Atrasada' %}movimento-debito{% elif parcela.status == 'Paga' %}saldo-positivo{% endif %}">
+                <td>{{ parcela.crediario_movimento.crediario.crediario }}</td>
+                <td>{{ parcela.crediario_movimento.crediario_grupo.grupo }}</td>
+                <td>{{ parcela.numero_parcela }}</td>
+                <td>{{ parcela.vencimento.strftime('%d/%m/%Y') }}</td>
+                <td>R$ {{ "%.2f"|format(parcela.valor_parcela|float) }}</td>
+                <td>{{ parcela.status }}</td>
+                <td>{{ parcela.crediario_movimento.data_compra.strftime('%d/%m/%Y') }}</td>
+                <td>{{ parcela.crediario_movimento.descricao if parcela.crediario_movimento.descricao else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="extrato-footer settings-section" style="margin-top: 20px;">
+        <p><strong>Total do Mês:</strong> R$ {{ "%.2f"|format(total_parcelas|float) }}</p>
+    </div>
+    {% else %}
+    <p>Nenhuma parcela de crediário a vencer no mês selecionado.</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('extrato_crediario_bp.selecionar_extrato_crediario') }}" class="btn-secondary"
+    style="margin-top: 20px;">
+    <i class="fas fa-arrow-left"></i> Voltar
+</a>
+{% endblock %}

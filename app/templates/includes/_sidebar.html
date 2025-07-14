@@ -57,6 +57,12 @@
                             <i class="fas fa-money-bill-transfer"></i> Bancário
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ url_for('extrato_crediario_bp.selecionar_extrato_crediario') }}"
+                            class="{% if request.endpoint.startswith('extrato_crediario_bp') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Crediário
+                        </a>
+                    </li>
                 </ul>
             </li>
 

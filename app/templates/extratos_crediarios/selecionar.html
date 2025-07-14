@@ -1,0 +1,70 @@
+{# app/templates/extratos_crediarios/selecionar.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Extrato Crediário{% endblock %}
+
+{% block topbar_content %}
+<h1>Extrato de Crediário</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="settings-section">
+    <h2>Selecione o Crediário e o Mês</h2>
+    <form method="POST" action="{{ url_for('extrato_crediario_bp.exibir_extrato_crediario') }}">
+        <div class="form-group">
+            <label for="crediario_id">Crediário (Opcional - Todos se não selecionado):</label>
+            <select id="crediario_id" name="crediario_id">
+                <option value="all">Todos os Crediários</option>
+                {% for crediario in crediarios_disponiveis %}
+                <option value="{{ crediario.id }}" {% if request.form and request.form.crediario_id|int==crediario.id
+                    %}selected{% endif %}>{{ crediario.crediario }} ({{ crediario.tipo }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="mes_ano">Mês/Ano:</label>
+            <input type="month" id="mes_ano" name="mes_ano" required
+                value="{{ request.form.mes_ano if request.form else '' }}">
+        </div>
+        <button type="submit" class="btn-primary">Gerar Extrato</button>
+    </form>
+</div>
+
+<style>
+    .settings-section {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+    }
+
+    .settings-section h2 {
+        color: var(--text-primary);
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 10px;
+    }
+
+    .settings-section .form-group {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
