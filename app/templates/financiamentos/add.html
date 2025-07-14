@@ -1,0 +1,80 @@
+{# app/templates/financiamentos/add.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Adicionar Financiamento{% endblock %}
+
+{% block topbar_content %}
+<h1>Adicionar Novo Financiamento</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('financiamento_bp.add_financiamento') }}">
+    <div class="form-group">
+        <label for="nome_financiamento">Nome do Financiamento:</label>
+        <input type="text" id="nome_financiamento" name="nome_financiamento" required
+            value="{{ request.form.nome_financiamento if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="conta_id">Conta Bancária Associada:</label>
+        <select id="conta_id" name="conta_id" required>
+            <option value="">Selecione uma conta</option>
+            {% for conta in contas_disponiveis %}
+            <option value="{{ conta.id }}" {% if request.form and request.form.conta_id|int==conta.id %}selected{% endif
+                %}>{{ conta.nome_banco }} - {{ conta.conta }} ({{ conta.tipo }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="valor_total_financiado">Valor Total Financiado:</label>
+        <input type="text" id="valor_total_financiado" name="valor_total_financiado" required
+            value="{{ request.form.valor_total_financiado if request.form else '0.00' }}" placeholder="Ex: 250000.00">
+    </div>
+    <div class="form-group">
+        <label for="taxa_juros_anual">Taxa de Juros Anual (%):</label>
+        <input type="text" id="taxa_juros_anual" name="taxa_juros_anual" required
+            value="{{ request.form.taxa_juros_anual if request.form else '0.00' }}" placeholder="Ex: 8.50">
+    </div>
+    <div class="form-group">
+        <label for="data_inicio">Data de Início:</label>
+        <input type="date" id="data_inicio" name="data_inicio" required
+            value="{{ request.form.data_inicio if request.form else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="prazo_meses">Prazo (em meses):</label>
+        <input type="number" id="prazo_meses" name="prazo_meses" required
+            value="{{ request.form.prazo_meses if request.form else '1' }}" min="1">
+    </div>
+    <div class="form-group">
+        <label for="tipo_amortizacao">Tipo de Amortização:</label>
+        <select id="tipo_amortizacao" name="tipo_amortizacao" required>
+            <option value="">Selecione o tipo</option>
+            {% for tipo in tipos_amortizacao %}
+            <option value="{{ tipo }}" {% if request.form and request.form.tipo_amortizacao==tipo %}selected{% endif %}>
+                {{ tipo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        <input type="text" id="descricao" name="descricao" value="{{ request.form.descricao if request.form else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Adicionar Financiamento</button>
+    <a href="{{ url_for('financiamento_bp.list_financiamentos') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}

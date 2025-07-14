@@ -1,0 +1,90 @@
+{# app/templates/financiamentos/list_parcelas.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Parcelas do Financiamento{% endblock %}
+
+{% block topbar_content %}
+<h1>Parcelas do Financiamento: {{ financiamento.nome_financiamento }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="button-group-top">
+    <a href="{{ url_for('financiamento_bp.list_financiamentos') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar para Financiamentos
+    </a>
+    {# Botão para importar parcelas para este financiamento específico #}
+    <a href="{{ url_for('financiamento_bp.importar_parcelas_financiamento_csv', financiamento_id=financiamento.id) }}"
+        class="btn-primary">
+        <i class="fas fa-file-import"></i> Importar/Atualizar Parcelas CSV
+    </a>
+</div>
+
+{% if parcelas %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Nº Parcela</th>
+            <th>Vencimento</th>
+            <th>Principal</th>
+            <th>Juros</th>
+            <th>Seguro</th>
+            <th>Taxas</th>
+            <th>Total Previsto</th>
+            <th>Data Pagamento</th>
+            <th>Valor Pago</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for parcela in parcelas %}
+        <tr
+            class="{% if parcela.status == 'Atrasada' %}movimento-debito{% elif parcela.status == 'Paga' %}saldo-positivo{% endif %}">
+            {# Exemplo de destaque #}
+            <td>{{ parcela.numero_parcela }}</td>
+            <td>{{ parcela.data_vencimento.strftime('%d/%m/%Y') }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_principal|float) }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_juros|float) }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_seguro|float) }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_taxas|float) }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_total_previsto|float) }}</td>
+            <td>{{ parcela.data_pagamento.strftime('%d/%m/%Y') if parcela.data_pagamento else '-' }}</td>
+            <td>R$ {{ "%.2f"|format(parcela.valor_pago|float) if parcela.valor_pago else '-' }}</td>
+            <td>{{ parcela.status }}</td>
+            <td class="action-buttons">
+                {% if parcela.status == 'A Pagar' or parcela.status == 'Atrasada' %}
+                <form action="{{ url_for('financiamento_bp.pagar_parcela', parcela_id=parcela.id) }}" method="POST"
+                    style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Marcar parcela {{ parcela.numero_parcela }} como paga?');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: var(--submenu-button);"
+                        title="Marcar como Paga">
+                        <i class="fas fa-check-circle"></i> Pagar
+                    </button>
+                </form>
+                {% endif %}
+                {# Futuras ações como 'Editar Pagamento', 'Amortizar' podem vir aqui #}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Nenhuma parcela cadastrada para este financiamento. Por favor, importe as parcelas via CSV.</p>
+{% endif %}
+{% endblock %}

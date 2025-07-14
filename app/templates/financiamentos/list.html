@@ -1,0 +1,80 @@
+{# app/templates/financiamentos/list.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Meus Financiamentos{% endblock %}
+
+{% block topbar_content %}
+<h1>Meus Financiamentos</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="button-group-top">
+    <a href="{{ url_for('financiamento_bp.add_financiamento') }}" class="btn-primary">
+        <i class="fas fa-plus-circle"></i> Novo Financiamento
+    </a>
+</div>
+
+{% if financiamentos %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Banco (Conta)</th>
+            <th>Valor Financiado</th>
+            <th>Juros Anual</th>
+            <th>Prazo (meses)</th>
+            <th>Amortização</th>
+            <th>Data Início</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for financiamento in financiamentos %}
+        <tr>
+            <td>{{ financiamento.nome_financiamento }}</td>
+            <td>{{ financiamento.conta.nome_banco }} ({{ financiamento.conta.conta }})</td>
+            <td>R$ {{ "%.2f"|format(financiamento.valor_total_financiado|float) }}</td>
+            <td>{{ "%.2f"|format(financiamento.taxa_juros_anual|float) }}%</td>
+            <td>{{ financiamento.prazo_meses }}</td>
+            <td>{{ financiamento.tipo_amortizacao }}</td>
+            <td>{{ financiamento.data_inicio.strftime('%d/%m/%Y') }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('financiamento_bp.list_parcelas_financiamento', financiamento_id=financiamento.id) }}"
+                    title="Ver Parcelas"><i class="fas fa-list"></i> Parcelas</a>
+                <a href="{{ url_for('financiamento_bp.importar_parcelas_financiamento_csv', financiamento_id=financiamento.id) }}"
+                    title="Importar Parcelas"><i class="fas fa-file-import"></i> Importar</a>
+                <a href="{{ url_for('financiamento_bp.edit_financiamento', financiamento_id=financiamento.id) }}"
+                    title="Editar Financiamento"><i class="fas fa-edit"></i> Editar</a>
+                <form action="{{ url_for('financiamento_bp.delete_financiamento', financiamento_id=financiamento.id) }}"
+                    method="POST" style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Tem certeza que deseja excluir este financiamento e todas as suas parcelas? Esta ação é irreversível!');"
+                        style="background: none; border: none; padding: 0; cursor: pointer; color: #DC3545;"
+                        title="Excluir Financiamento">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Você ainda não tem nenhum financiamento cadastrado.</p>
+{% endif %}
+{% endblock %}

@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('grupo'),
         document.getElementById('descricao'),
         document.getElementById('despesa_receita'),
-        document.getElementById('descricao_renda_movimento') 
+        document.getElementById('descricao_renda_movimento'),
+        document.getElementById('nome_financiamento')
     ];
     nomeInputs.forEach(input => {
         if (input && !input.readOnly) {
@@ -86,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const limiteInput = document.getElementById('limite');
     const valorInput = document.getElementById('valor');
     const valorTotalInput = document.getElementById('valor_total');
+    const valorTotalFinanciadoInput = document.getElementById('valor_total_financiado');
+    const taxaJurosAnualInput = document.getElementById('taxa_juros_anual');
 
     if (saldoInicialInput) {
         formatNumericInput(saldoInicialInput);
@@ -98,6 +101,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (valorTotalInput) {
         formatNumericInput(valorTotalInput);
+    }
+    if (valorTotalFinanciadoInput) {
+        formatNumericInput(valorTotalFinanciadoInput);
+    }
+    if (taxaJurosAnualInput) {
+        formatNumericInput(taxaJurosAnualInput);
     }
 
     // Lógica do submenu da sidebar

@@ -36,6 +36,7 @@ def create_app():
     from app.routes.crediario_movimento_routes import crediario_movimento_bp
     from app.routes.renda_movimento_routes import renda_movimento_bp
     from app.routes.extrato_bancario_routes import extrato_bancario_bp
+    from app.routes.financiamento_routes import financiamento_bp
 
     # REGISTRAR BLUEPRINTS
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
@@ -53,6 +54,7 @@ def create_app():
     app.register_blueprint(crediario_movimento_bp, url_prefix='/crediario_movimentos')
     app.register_blueprint(renda_movimento_bp, url_prefix='/renda_movimentos')
     app.register_blueprint(extrato_bancario_bp, url_prefix='/extratos_bancarios')
+    app.register_blueprint(financiamento_bp, url_prefix='/financiamentos')
 
     # Rota raiz para redirecionar para o login ou para a página inicial padrão
     @app.route('/')
@@ -79,6 +81,8 @@ def init_db():
         import app.models.conta_movimento_model
         import app.models.crediario_parcela_model
         import app.models.renda_movimento_model
+        import app.models.financiamento_model
+        import app.models.financiamento_parcela_model
         db.create_all()
         print("Tabelas do banco de dados criadas/verificadas.")
 

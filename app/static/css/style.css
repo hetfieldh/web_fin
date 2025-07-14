@@ -12,7 +12,7 @@
     --sidebar-bg: #34465D;
     --sidebar-text: #f5f6f7;
     --color-debito: #ab1524;
-    --color-positivo: #28A745; 
+    --color-positivo: #28A745;
     --color-negativo: #DC3545;
 }
 
@@ -130,12 +130,15 @@ body {
     font-weight: normal;
 }
 
-
-/* Estilo para o texto do rodapé da sidebar */
 .sidebar-footer .footer-text {
     color: #a19d9d;
     font-size: 0.85em;
     margin-top: 15px;
+}
+
+/* Borda de menu */
+.border-menu {
+  border-bottom: 0.3px solid #a19d9d66;
 }
 
 /* Conteúdo Principal */

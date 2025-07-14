@@ -43,8 +43,24 @@
                 </a>
             </li>
 
-            <li
-                class="has-submenu {% if request.endpoint.startswith('conta_movimento_bp') %}expanded-parent{% endif %}">
+            <div class="border-menu"></div>
+
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-exchange-alt"></i> Extratos
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="submenu">
+                    <li>
+                        <a href="{{ url_for('extrato_bancario_bp.selecionar_extrato') }}"
+                            class="{% if request.endpoint.startswith('extrato_bancario_bp') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Bancário
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="has-submenu">
                 <a href="#" class="submenu-toggle">
                     <i class="fas fa-exchange-alt"></i> Transações
                     <i class="fas fa-chevron-down submenu-arrow"></i>
@@ -63,20 +79,21 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ url_for('financiamento_bp.list_financiamentos') }}"
+                            class="{% if request.endpoint.startswith('financiamentos') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Financiamento
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ url_for('renda_movimento_bp.list_renda_movimentos') }}"
                             class="{% if request.endpoint.startswith('renda_movimento_bp') %}active{% endif %}">
                             <i class="fas fa-money-bill-transfer"></i> Renda
                         </a>
                     </li>
-
-                    <li>
-                        <a href="{{ url_for('extrato_bancario_bp.selecionar_extrato') }}"
-                            class="{% if request.endpoint.startswith('extrato_bancario_bp') %}active{% endif %}">
-                            <i class="fas fa-money-bill-transfer"></i> Extrato Bancário
-                        </a>
-                    </li>
                 </ul>
             </li>
+
+            <div class="border-menu"></div>
 
             {% if current_user.is_authenticated and current_user.is_admin %}
             <li>

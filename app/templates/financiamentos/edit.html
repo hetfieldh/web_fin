@@ -1,0 +1,84 @@
+{# app/templates/financiamentos/edit.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Editar Financiamento{% endblock %}
+
+{% block topbar_content %}
+<h1>Editar Financiamento: {{ financiamento.nome_financiamento }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('financiamento_bp.edit_financiamento', financiamento_id=financiamento.id) }}">
+    <div class="form-group">
+        <label for="nome_financiamento">Nome do Financiamento:</label>
+        {# readonly #}
+        <input type="text" id="nome_financiamento" name="nome_financiamento"
+            value="{{ financiamento.nome_financiamento }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="conta_id">Conta Bancária Associada:</label>
+        {# disabled e hidden para enviar o valor #}
+        <select id="conta_id" name="conta_id" required disabled>
+            <option value="{{ financiamento.conta_id }}" selected>{{ financiamento.conta.nome_banco }} - {{
+                financiamento.conta.conta }} ({{ financiamento.conta.tipo }})</option>
+        </select>
+        <input type="hidden" name="conta_id" value="{{ financiamento.conta_id }}">
+    </div>
+    <div class="form-group">
+        <label for="valor_total_financiado">Valor Total Financiado:</label>
+        {# readonly #}
+        <input type="text" id="valor_total_financiado" name="valor_total_financiado"
+            value="{{ '%.2f'|format(financiamento.valor_total_financiado|float) }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="taxa_juros_anual">Taxa de Juros Anual (%):</label>
+        {# readonly #}
+        <input type="text" id="taxa_juros_anual" name="taxa_juros_anual"
+            value="{{ '%.4f'|format(financiamento.taxa_juros_anual|float) }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="data_inicio">Data de Início:</label>
+        {# readonly #}
+        <input type="date" id="data_inicio" name="data_inicio"
+            value="{{ financiamento.data_inicio.strftime('%Y-%m-%d') }}" required readonly>
+    </div>
+    <div class="form-group">
+        <label for="prazo_meses">Prazo (em meses):</label>
+        {# readonly #}
+        <input type="number" id="prazo_meses" name="prazo_meses" value="{{ financiamento.prazo_meses }}" required
+            readonly>
+    </div>
+    <div class="form-group">
+        <label for="tipo_amortizacao">Tipo de Amortização:</label>
+        {# disabled e hidden para enviar o valor #}
+        <select id="tipo_amortizacao" name="tipo_amortizacao" required disabled>
+            <option value="{{ financiamento.tipo_amortizacao }}" selected>{{ financiamento.tipo_amortizacao }}</option>
+        </select>
+        <input type="hidden" name="tipo_amortizacao" value="{{ financiamento.tipo_amortizacao }}">
+    </div>
+    <div class="form-group">
+        <label for="descricao">Descrição (opcional):</label>
+        {# Este campo continua editável #}
+        <input type="text" id="descricao" name="descricao"
+            value="{{ financiamento.descricao if financiamento.descricao else '' }}">
+    </div>
+    <button type="submit" class="btn-primary">Salvar Alterações</button>
+    <a href="{{ url_for('financiamento_bp.list_financiamentos') }}" class="btn-secondary"
+        style="margin-left: 10px;">Cancelar</a>
+</form>
+{% endblock %}
