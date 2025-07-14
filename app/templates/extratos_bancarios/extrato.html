@@ -1,0 +1,83 @@
+{# app/templates/extratos_bancarios/extrato.html #}
+{% extends 'base.html' %}
+
+{% block title %}WebFin - Extrato Bancário{% endblock %}
+
+{% block topbar_content %}
+<h1>Extrato Bancário</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="extrato-header settings-section">
+    <div class="extrato-details-group">
+        <p><strong>Banco:</strong>
+            <font color='mediumblue'>{{ conta.nome_banco }} | {{ conta.agencia if conta.agencia else '-' }} | {{
+                conta.conta }} ({{ conta.tipo }})</font>
+        </p>
+        <p><strong>Limite Cheque Especial:</strong>
+            <font color='mediumblue'>R$ {{ "%.2f"|format(conta.limite|float) }}</font>
+        </p>
+    </div>
+</div>
+
+<div class="extrato-movimentos settings-section" style="margin-top: 20px;">
+    <h3>
+        <font color='crimson'>Extrato Ref: {{ mes_ano.strftime('%m/%Y') }}</font>
+    </h3>
+    <p><strong>Saldo Inicial do Mês:</strong> <span
+            class="{% if saldo_inicial >= 0 %}saldo-positivo{% else %}saldo-negativo{% endif %}">R$ {{
+            "%.2f"|format(saldo_inicial|float) }}</span>
+    </p>
+    {% if movimentos %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Transação</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movimento in movimentos %}
+            <tr class="{% if movimento.conta_transacao_item.tipo == 'Débito' %}movimento-debito{% endif %}">
+                <td>{{ movimento.data.strftime('%d/%m/%Y') }}</td>
+                <td>{{ movimento.conta_transacao_item.transacao }}</td>
+                <td>{{ movimento.conta_transacao_item.tipo }}</td>
+                <td>R$ {{ "%.2f"|format(movimento.valor|float) }}</td>
+                <td>{{ movimento.descricao if movimento.descricao else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nenhuma movimentação para esta conta no mês selecionado.</p>
+    {% endif %}
+</div>
+
+<div class="extrato-footer settings-section" style="margin-top: 20px;">
+    <p><strong>Saldo Final do Mês:</strong> <span
+            class="{% if saldo_final >= 0 %}saldo-positivo{% else %}saldo-negativo{% endif %}">R$ {{
+            "%.2f"|format(saldo_final|float) }}</span></p>
+</div>
+
+<a href="{{ url_for('extrato_bancario_bp.selecionar_extrato') }}" class="btn-secondary" style="margin-top: 20px;">
+    <i class="fas fa-arrow-left"></i> Voltar
+</a>
+{% endblock %}

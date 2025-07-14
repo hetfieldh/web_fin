@@ -68,6 +68,13 @@
                             <i class="fas fa-money-bill-transfer"></i> Renda
                         </a>
                     </li>
+
+                    <li>
+                        <a href="{{ url_for('extrato_bancario_bp.selecionar_extrato') }}"
+                            class="{% if request.endpoint.startswith('extrato_bancario_bp') %}active{% endif %}">
+                            <i class="fas fa-money-bill-transfer"></i> Extrato Bancário
+                        </a>
+                    </li>
                 </ul>
             </li>
 

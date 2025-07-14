@@ -35,6 +35,7 @@ def create_app():
     from app.routes.conta_movimento_routes import conta_movimento_bp
     from app.routes.crediario_movimento_routes import crediario_movimento_bp
     from app.routes.renda_movimento_routes import renda_movimento_bp
+    from app.routes.extrato_bancario_routes import extrato_bancario_bp
 
     # REGISTRAR BLUEPRINTS
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
@@ -51,6 +52,7 @@ def create_app():
     app.register_blueprint(conta_movimento_bp, url_prefix='/conta_movimentos')
     app.register_blueprint(crediario_movimento_bp, url_prefix='/crediario_movimentos')
     app.register_blueprint(renda_movimento_bp, url_prefix='/renda_movimentos')
+    app.register_blueprint(extrato_bancario_bp, url_prefix='/extratos_bancarios')
 
     # Rota raiz para redirecionar para o login ou para a página inicial padrão
     @app.route('/')
