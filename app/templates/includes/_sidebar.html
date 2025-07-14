@@ -15,35 +15,44 @@
                 </a>
             </li>
 
-            <li>
-                <a href="{{ url_for('conta_bp.list_contas') }}"
-                    class="{% if request.endpoint.startswith('conta_bp') %}active{% endif %}">
-                    <i class="fas fa-wallet"></i> Contas Bancárias
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ url_for('crediario_bp.list_crediarios') }}"
-                    class="{% if request.endpoint.startswith('crediario_bp') %}active{% endif %}">
-                    <i class="fas fa-credit-card"></i> Crediários
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}"
-                    class="{% if request.endpoint.startswith('despesa_receita_bp') %}active{% endif %}">
-                    <i class="fas fa-credit-card"></i> Despesas e Receitas
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ url_for('renda_bp.list_rendas') }}"
-                    class="{% if request.endpoint.startswith('renda_bp') %}active{% endif %}">
-                    <i class="fas fa-credit-card"></i> Rendas
-                </a>
-            </li>
-
             <div class="border-menu"></div>
+
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-exchange-alt"></i> Cadastros
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="submenu">
+
+                    <li>
+                        <a href="{{ url_for('conta_bp.list_contas') }}"
+                            class="{% if request.endpoint.startswith('conta_bp') %}active{% endif %}">
+                            <i class="fas fa-wallet"></i> Contas Bancárias
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('crediario_bp.list_crediarios') }}"
+                            class="{% if request.endpoint.startswith('crediario_bp') %}active{% endif %}">
+                            <i class="fas fa-credit-card"></i> Crediários
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('despesa_receita_bp.list_despesas_receitas') }}"
+                            class="{% if request.endpoint.startswith('despesa_receita_bp') %}active{% endif %}">
+                            <i class="fas fa-credit-card"></i> Despesas e Receitas
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('renda_bp.list_rendas') }}"
+                            class="{% if request.endpoint.startswith('renda_bp') %}active{% endif %}">
+                            <i class="fas fa-credit-card"></i> Rendas
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="has-submenu">
                 <a href="#" class="submenu-toggle">

@@ -138,7 +138,7 @@ body {
 
 /* Borda de menu */
 .border-menu {
-  border-bottom: 0.3px solid #a19d9d66;
+    border-bottom: 0.3px solid #a19d9d66;
 }
 
 /* Conteúdo Principal */
@@ -301,6 +301,28 @@ body {
     box-sizing: border-box;
 }
 
+/* Estilos para a seção de configurações/importação */
+.settings-section {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.settings-section h2 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 10px;
+}
+
+.settings-section .form-group {
+    margin-bottom: 15px;
+}
+
 .btn-primary {
     background-color: var(--accent-blue);
     color: white;
@@ -388,4 +410,25 @@ body {
     background-color: #fff3cd;
     color: #856404;
     border-color: #ffeeba;
+}
+
+.settings-section {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.settings-section h2 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 10px;
+}
+
+.settings-section .form-group {
+    margin-bottom: 15px;
 }
